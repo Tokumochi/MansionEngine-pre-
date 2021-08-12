@@ -16,9 +16,9 @@ interface CodeState {
 export const GenerateRoomCode = (doors: DoorState[]) => {
 
     const codeStates: CodeState[] = doors.map((door) => {
-        const { id, kind, floor, process_string, visitors } = door;
-        const inputs: InputState[] = visitors.map((visitor) => {
-            return { id: visitor.lower_id }
+        const { id, kind, floor, process_string, stairs } = door;
+        const inputs: InputState[] = stairs.map((stair) => {
+            return { id: stair.lower_id }
         });
         return { id: id, kind: kind, floor: floor, process_string: process_string, inputs: inputs };
     });

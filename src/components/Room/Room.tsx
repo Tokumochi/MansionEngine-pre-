@@ -7,13 +7,17 @@ import { Door } from '../Door/Door'
 import './Room.css';
 
 export interface RoomProps extends RoomState {
-    onDoorPosChanged(id: number, x: number, y: number): void
-    onDoorSelected(id: number): void
+    onDoorPosChanged(id: number, x: number, y: number): void,
+    onStairConnected(upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number): void,
+    onNothingSelected(): void,
+    onDoorSelected(id: number): void,
+    onStairSelected(id: number, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { doors, room_width, room_height, selected_door_id, onDoorPosChanged, onDoorSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_state, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const [ targetX, setTargetX ] = useState(-1);
     const [ targetY, setTargetY ] = useState(-1);
+    const { select_kind, selected_door_id, selected_stair_index } = select_state;
     const url: string = "run.html";
     return (
         <svg version="1.1" width={room_width * 300} height={room_height * 150}>
@@ -32,18 +36,16 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, selected_
             <rect className="target" x={targetX * 300} y={targetY * 150}
                 //style={{left: targetX * 300, top: targetY * 150}}
                 onClick={() => {
-                    if(selected_door_id !== -1) {
+                    if(select_kind == "Door" && selected_door_id !== -1) {
                         onDoorPosChanged(selected_door_id, targetX, targetY);
-                        onDoorSelected(-1);
+                        onNothingSelected();
                     }
                 }}
             />
                 { doors.map((door, index) =>
                     {
                         return (
-                            //<div className="door">
-                                <Door key={index} door={door} selected_door_id={selected_door_id} onDoorPosChanged={onDoorPosChanged} onDoorSelected={onDoorSelected}/>
-                            //</div>
+                            <Door key={index} door={door} select_state={select_state} onDoorPosChanged={onDoorPosChanged} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
                         );
                     }
                 ) }
@@ -68,10 +70,14 @@ export default connect(
         doors: props.doors,
         room_width: props.room_width,
         room_height: props.room_height,
-        selected_door_id: props.selected_door_id,
+        //selected_door_id: props.selected_door_id,
+        select_state: props.select_state,
     }),
     dispatch => ({
         onDoorPosChanged: (id: number, x: number, y: number) => dispatch(actions.setDoorPos(id, x, y)),
+        onStairConnected: (upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number) => dispatch(actions.connectStair(upper_id, upper_index, lower_id, lower_x, lower_y)),
+        onNothingSelected: () => dispatch(actions.selectNothing()),
         onDoorSelected: (id: number) => dispatch(actions.selectDoor(id)),
+        onStairSelected: (id: number, index: number) => dispatch(actions.selectStair(id, index)),
     })
 )(Room);
