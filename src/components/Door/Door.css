@@ -1,0 +1,15 @@
+.door_base {
+    fill: lightblue;
+    font-size: 50px;
+    width: 200px;
+    height: 100px;
+    rx: 5;
+    stroke-width: 5;
+}
+
+.stair {
+    /*background: darkolivegreen;*/
+    stroke: darkolivegreen;
+    stroke-width: 10px;
+    stroke-linecap: round;
+}

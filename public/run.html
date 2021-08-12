@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>リセットテスト</title>
+</head>
+<body id="body">
+	<script id="target" type="text/javascript">
+		var script = document.getElementById('target');
+		target.remove();
+
+		var body = document.getElementById('body');
+		var script = document.createElement('script');
+		script.type = "text/javascript";
+
+		var code = localStorage.getItem('RoomCode');
+
+		//script.innerHTML = "alert('aaa');";
+		script.innerHTML = code;
+		body.appendChild(script);
+	</script>
+</body>
+</html>
