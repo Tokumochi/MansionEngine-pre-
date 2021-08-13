@@ -17,3 +17,7 @@
 .input_point {
     /*fill: darkseagreen;*/
 }
+
+.output_point {
+    fill: darkslategrey;
+}

@@ -32,15 +32,7 @@ export interface RoomState {
     doors: DoorState[],
     room_width: number,
     room_height: number,
-    //selected_door_id: number,
     select_state: SelectState,
-}
-
-export interface DoorMetaState {
-    door_state: DoorState,
-    name: string,
-    x: number,
-    y: number,
 }
 
 // Actions
@@ -54,7 +46,7 @@ export enum ActionTypes {
 
 export const actions = {
     setDoorPos: (id: number, x: number, y: number) => { return ({ type: ActionTypes.SET_DOOR_POS, payload: { id: id, x: x, y: y } }) },
-    connectStair: (upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number) => { return({ type: ActionTypes.CONNECT_STAIR, payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id, lower_x: lower_x, lower_y: lower_y } }) },
+    connectStair: (upper_id: number, upper_index: number, lower_id: number) => { return({ type: ActionTypes.CONNECT_STAIR, payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id } }) },
     selectNothing: () => { return ({ type: ActionTypes.SELECT_NOTHING, payload: { id: -1, index: -1 } }) },
     selectDoor: (id: number) => { return ({ type: ActionTypes.SELECT_DOOR, payload: { id: id, index: -1 } }) },
     selectStair: (id: number, index: number) => { return ({ type: ActionTypes.SELECT_STAIR, payload: { id: id, index: index } }) },
@@ -77,14 +69,24 @@ function SetDoorPositionReducer() {
     }
 }
 function ConnectStairReducer() {
-    return (state: RoomState, action: { type: string, payload: { upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number } } ): RoomState => {
+    return (state: RoomState, action: { type: string, payload: { upper_id: number, upper_index: number, lower_id: number } } ): RoomState => {
+        const lower_door = state.doors.find(element => element.id === action.payload.lower_id);
+
+        if(lower_door === undefined) {
+            return state;
+        }
+
+        const lower_floor: number = (lower_door as DoorState).floor;
+        const lower_x: number = (lower_door as DoorState).x;
+        const lower_y: number = (lower_door as DoorState).y;
+
         return {
             ...state,
             doors: state.doors.map(door =>
-                door.id === action.payload.upper_id ? {
+                (door.id === action.payload.upper_id && lower_floor < door.floor) ? {
                     ...door,
-                    stairs: door.stairs.map<StairState>((stair, index) =>
-                        index === action.payload.upper_index ? { lower_id: action.payload.lower_id, lower_x: action.payload.lower_x, lower_y: action.payload.lower_y } : stair
+                    stairs: door.stairs.map((stair, index) =>
+                        (index === action.payload.upper_index) ? { lower_id: action.payload.lower_id, lower_x: lower_x, lower_y: lower_y } : stair
                     ),
                 } : door
             ),
@@ -109,7 +111,7 @@ const defaultDoors: DoorState[] = [
     {id: 1, name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, process_string: "() => { return 3; }", isCorridor: false, stairs: []},
     {id: 2, name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, process_string: "() => { return 2; }", isCorridor: false, stairs: []},
     {id: 3, name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, process_string: "(a, b) => { console.log(a + b); }", isCorridor: false, stairs: [{lower_id: 1, lower_x: 2, lower_y: 3}, {lower_id: 2, lower_x: 4, lower_y: 3}]},
-    {id: 4, name: 'test4', kind: "Process", x: 1, y: 1, floor: 2, process_string: "(a) => { console.log(a); }", isCorridor: false, stairs: [{lower_id: -1, lower_x: -1, lower_y: -1}]},
+    {id: 4, name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, process_string: "(a) => { console.log(a); }", isCorridor: false, stairs: [{lower_id: -1, lower_x: -1, lower_y: -1}]},
 ];
 
 const initialState: RoomState = {

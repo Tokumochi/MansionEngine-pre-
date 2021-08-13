@@ -7,7 +7,7 @@ interface DoorProps {
     door: DoorState,
     select_state: SelectState,
     onDoorPosChanged(id: number, x: number, y: number): void,
-    onStairConnected(upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number): void,
+    onStairConnected(upper_id: number, upper_index: number, lower_id: number): void,
     onNothingSelected(): void,
     onDoorSelected(id: number): void,
     onStairSelected(id: number, index: number): void,
@@ -17,7 +17,6 @@ export const Door: FC<DoorProps> = ( { door, select_state, onDoorPosChanged, onS
     const { id, name, kind, x, y, isCorridor, stairs } = door;
     const { select_kind, selected_door_id, selected_stair_index } = select_state;
     const door_border_color: string = ((select_kind === "Door" && selected_door_id === id) ? 'red' : 'lightblue');
-    const output_point_color: string = 'darkseagreen';
     return (
         <>
             <rect className="door_base" 
@@ -28,10 +27,10 @@ export const Door: FC<DoorProps> = ( { door, select_state, onDoorPosChanged, onS
             }> 
             </rect>
             <text x={300 * x + 150} y={150 * y + 75} textAnchor="middle" fontSize="30" fill="black">{name}</text>
-            <circle className="input_point" cx={300 * x + 150} cy={150 * y + 25} r="13" fill={output_point_color}
+            <circle className="output_point" cx={300 * x + 150} cy={150 * y + 25} r="13"
                 onClick={() => {
                     if(select_kind === "Stair") {
-                        onStairConnected(selected_door_id, selected_stair_index, id, x, y);
+                        onStairConnected(selected_door_id, selected_stair_index, id);
                         onNothingSelected();
                     }
                 }}

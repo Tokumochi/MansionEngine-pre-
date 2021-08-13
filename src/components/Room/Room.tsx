@@ -8,7 +8,7 @@ import './Room.css';
 
 export interface RoomProps extends RoomState {
     onDoorPosChanged(id: number, x: number, y: number): void,
-    onStairConnected(upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number): void,
+    onStairConnected(upper_id: number, upper_index: number, lower_id: number): void,
     onNothingSelected(): void,
     onDoorSelected(id: number): void,
     onStairSelected(id: number, index: number): void,
@@ -20,7 +20,7 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
     const { select_kind, selected_door_id, selected_stair_index } = select_state;
     const url: string = "run.html";
     return (
-        <svg version="1.1" width={room_width * 300} height={room_height * 150}>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={room_width * 300} height={room_height * 150}>
             <rect className="board"
                 //style={{width: room_width * 300, height: room_height * 150}}
                 width={room_width * 300} height={room_height * 150} fill="#eef"
@@ -49,18 +49,16 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
                         );
                     }
                 ) }
-            <text x="75" y="50" textAnchor="middle" fontSize="20" fill="black">実行</text>
-            <rect className="run_button"
-                onClick={() => {
-                    window.open(url, "_blank");
-                }
-            }/>
-            <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black">保存</text>
-            <rect className="save_button"
+            <a href={url} target="_blank">
+                <rect className="run_button"/>
+                <text x="75" y="50" textAnchor="middle" fontSize="20" fill="black">実行</text>
+            </a>
+            <rect className="save_button" cursor="pointer"
                 onClick={() => {
                     localStorage.setItem('RoomCode', GenerateRoomCode(doors));
                 }
             }/>
+            <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black" pointerEvents="none">保存</text>
         </svg>
     );
 }
@@ -75,7 +73,7 @@ export default connect(
     }),
     dispatch => ({
         onDoorPosChanged: (id: number, x: number, y: number) => dispatch(actions.setDoorPos(id, x, y)),
-        onStairConnected: (upper_id: number, upper_index: number, lower_id: number, lower_x: number, lower_y: number) => dispatch(actions.connectStair(upper_id, upper_index, lower_id, lower_x, lower_y)),
+        onStairConnected: (upper_id: number, upper_index: number, lower_id: number) => dispatch(actions.connectStair(upper_id, upper_index, lower_id)),
         onNothingSelected: () => dispatch(actions.selectNothing()),
         onDoorSelected: (id: number) => dispatch(actions.selectDoor(id)),
         onStairSelected: (id: number, index: number) => dispatch(actions.selectStair(id, index)),
