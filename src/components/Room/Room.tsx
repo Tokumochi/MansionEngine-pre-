@@ -7,11 +7,11 @@ import { Door } from '../Door/Door'
 import './Room.css';
 
 export interface RoomProps extends RoomState {
-    onDoorPosChanged(id: number, x: number, y: number): void,
-    onStairConnected(upper_id: number, upper_index: number, lower_id: number): void,
+    onDoorPosChanged(id: string, x: number, y: number): void,
+    onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
     onNothingSelected(): void,
-    onDoorSelected(id: number): void,
-    onStairSelected(id: number, index: number): void,
+    onDoorSelected(id: string): void,
+    onStairSelected(id: string, index: number): void,
 }
 
 export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_state, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
@@ -36,7 +36,7 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
             <rect className="target" x={targetX * 300} y={targetY * 150}
                 //style={{left: targetX * 300, top: targetY * 150}}
                 onClick={() => {
-                    if(select_kind == "Door" && selected_door_id !== -1) {
+                    if(select_kind == "Door" && selected_door_id !== '-1') {
                         onDoorPosChanged(selected_door_id, targetX, targetY);
                         onNothingSelected();
                     }
@@ -72,10 +72,10 @@ export default connect(
         select_state: props.select_state,
     }),
     dispatch => ({
-        onDoorPosChanged: (id: number, x: number, y: number) => dispatch(actions.setDoorPos(id, x, y)),
-        onStairConnected: (upper_id: number, upper_index: number, lower_id: number) => dispatch(actions.connectStair(upper_id, upper_index, lower_id)),
+        onDoorPosChanged: (id: string, x: number, y: number) => dispatch(actions.setDoorPos(id, x, y)),
+        onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(actions.connectStair(upper_id, upper_index, lower_id)),
         onNothingSelected: () => dispatch(actions.selectNothing()),
-        onDoorSelected: (id: number) => dispatch(actions.selectDoor(id)),
-        onStairSelected: (id: number, index: number) => dispatch(actions.selectStair(id, index)),
+        onDoorSelected: (id: string) => dispatch(actions.selectDoor(id)),
+        onStairSelected: (id: string, index: number) => dispatch(actions.selectStair(id, index)),
     })
 )(Room);
