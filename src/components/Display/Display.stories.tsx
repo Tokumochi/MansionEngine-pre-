@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Story } from '@storybook/react';
 
-import store from './../../lib/redux';
+import store from './../../lib/redux/reducers';
 import { Display } from './Display';
 
 export default {

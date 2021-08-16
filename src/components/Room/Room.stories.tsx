@@ -1,9 +1,11 @@
 import { Story } from '@storybook/react/types-6-0';
+import { BrowserRouter } from 'react-router-dom';
 
 import { Room, RoomProps } from './Room';
 
 export default {
     component: Room,
+    decorators: [(story: () => React.ReactNode) =><BrowserRouter>{story()}</BrowserRouter>],
     title: 'Room',
 };
 

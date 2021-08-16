@@ -1,11 +1,11 @@
-import { DoorKind, DoorState, RoomState } from "./redux";
+import { DoorKind, DoorState, RoomState } from "./redux/states";
 
 interface InputState {
-    id: number,
+    id: string,
 }
 
 interface CodeState {
-    id: number,
+    id: string,
     kind: DoorKind,
     floor: number,
     //process_src: string,

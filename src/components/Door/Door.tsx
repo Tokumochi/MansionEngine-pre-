@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { DoorState, SelectState } from '../../lib/redux';
+import { DoorState, SelectState } from '../../lib/redux/states';
 
 import './Door.css';
 
-interface DoorProps {
+export interface DoorProps {
     door: DoorState,
     select_state: SelectState,
     onDoorPosChanged(id: string, x: number, y: number): void,
@@ -47,9 +47,9 @@ export const Door: FC<DoorProps> = ( { door, select_state, onDoorPosChanged, onS
                     return (
                         <>
                             { lower_id === '-1' ? <></> :
-                                <line className="stair" key={index} x1={300 * x + offset_x} y1={150 * y + 125} x2={300 * lower_x + 150} y2={150 * lower_y + 25}/>
+                                <line className="stair" key={'l' + index} x1={300 * x + offset_x} y1={150 * y + 125} x2={300 * lower_x + 150} y2={150 * lower_y + 25}/>
                             }
-                            <circle className="input_point" cx={300 * x + offset_x} cy={150 * y + 125} r="13" fill={input_point_color}
+                            <circle key={'c' + index} className="input_point" cx={300 * x + offset_x} cy={150 * y + 125} r="13" fill={input_point_color}
                                 onClick={() => {
                                     onStairSelected(id, index);
                                 }}

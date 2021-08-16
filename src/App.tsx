@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import store from './lib/redux';
+import store from './lib/redux/reducers';
 import { Mansion } from './components/Mansion/Mansion';
 
 function App() {

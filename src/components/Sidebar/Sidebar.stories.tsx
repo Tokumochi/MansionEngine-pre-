@@ -1,16 +1,15 @@
-import React from 'react';
 import { Provider } from 'react-redux';
 import { Story } from '@storybook/react';
 
 import store from './../../lib/redux/reducers';
-import { Mansion } from './Mansion';
+import { Sidebar } from './Sidebar';
 
 export default {
-    component: Mansion,
+    component: Sidebar,
     decorators: [(story: () => React.ReactNode) => <Provider store={store}>{story()}</Provider>],
-    title: 'Mansion',
+    title: 'Sidebar',
 };
 
-const Template: Story = (args) => <Mansion {...args} />;
+const Template: Story = (args) => <Sidebar {...args} />;
 
 export const Default = Template.bind({});

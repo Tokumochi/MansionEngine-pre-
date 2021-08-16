@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { isPropertySignature } from 'typescript';
-import { actions, DoorState, RoomState } from '../../lib/redux';
+import { DoorState, RoomState, AppState } from '../../lib/redux/states';
+import { rooms_actions } from '../../lib/redux/actions';
 
 export interface ProcessProps extends RouteComponentProps<{ id: string }> {
     doors: DoorState[],
@@ -42,10 +42,10 @@ export const EditProcess: FC<EditProcessProps> = ( { id, process_content, onProc
 }
 
 export default connect(
-    (props: RoomState) => ({
-        doors: props.doors,
+    (props: AppState) => ({
+        doors: props.room.doors
     }),
     dispath => ({
-        onProcessContentChanged: (id: string, content: string) => dispath(actions.setProcessContent(id, content)),
+        onProcessContentChanged: (id: string, content: string) => dispath(rooms_actions.setProcessContent(id, content)),
     }),
 )(Process);

@@ -3,14 +3,14 @@ import { Provider } from 'react-redux';
 import { Story } from '@storybook/react';
 
 import store from './../../lib/redux/reducers';
-import { Mansion } from './Mansion';
+import { Screen } from './Screen';
 
 export default {
-    component: Mansion,
+    component: Screen,
     decorators: [(story: () => React.ReactNode) => <Provider store={store}>{story()}</Provider>],
-    title: 'Mansion',
+    title: 'Screen',
 };
 
-const Template: Story = (args) => <Mansion {...args} />;
+const Template: Story = (args) => <Screen {...args} />;
 
 export const Default = Template.bind({});

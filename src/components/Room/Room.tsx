@@ -1,10 +1,12 @@
 import { FC, useState } from 'react';
 import { connect } from 'react-redux';
 import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { actions, RoomState } from '../../lib/redux';
+import { AppState, RoomState } from '../../lib/redux/states';
+import { rooms_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
 import './Room.css';
+import { CombinedState } from 'redux';
 
 export interface RoomProps extends RoomState {
     onDoorPosChanged(id: string, x: number, y: number): void,
@@ -64,18 +66,17 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
 }
 
 export default connect(
-    (props: RoomProps) => ({
-        doors: props.doors,
-        room_width: props.room_width,
-        room_height: props.room_height,
-        //selected_door_id: props.selected_door_id,
-        select_state: props.select_state,
+    (props: AppState) => ({
+        doors: props.room.doors,
+        room_width: props.room.room_width,
+        room_height: props.room.room_height,
+        select_state: props.room.select_state,
     }),
     dispatch => ({
-        onDoorPosChanged: (id: string, x: number, y: number) => dispatch(actions.setDoorPos(id, x, y)),
-        onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(actions.connectStair(upper_id, upper_index, lower_id)),
-        onNothingSelected: () => dispatch(actions.selectNothing()),
-        onDoorSelected: (id: string) => dispatch(actions.selectDoor(id)),
-        onStairSelected: (id: string, index: number) => dispatch(actions.selectStair(id, index)),
+        onDoorPosChanged: (id: string, x: number, y: number) => dispatch(rooms_actions.setDoorPos(id, x, y)),
+        onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(rooms_actions.connectStair(upper_id, upper_index, lower_id)),
+        onNothingSelected: () => dispatch(rooms_actions.selectNothing()),
+        onDoorSelected: (id: string) => dispatch(rooms_actions.selectDoor(id)),
+        onStairSelected: (id: string, index: number) => dispatch(rooms_actions.selectStair(id, index)),
     })
 )(Room);
