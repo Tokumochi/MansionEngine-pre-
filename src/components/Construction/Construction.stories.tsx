@@ -1,9 +1,11 @@
 import { Story } from '@storybook/react';
+import { BrowserRouter } from 'react-router-dom';
 
 import { Construction, ConstructionProps } from './Construction';
 
 export default {
     component: Construction,
+    decorators: [(story: () => React.ReactNode) =><BrowserRouter>{story()}</BrowserRouter>],
     title: 'Construction',
 };
 
@@ -12,8 +14,9 @@ const Template: Story<ConstructionProps> = (args) => <Construction {...args} />;
 export const Default = Template.bind({});
 Default.args = {
     processes: [
-        { process_name: 'aiueo', process_content: 'aiueo' },
-        { process_name: 'hello', process_content: 'konnichiwa' },
-        { process_name: 'fooya', process_content: 'yahallo' },
+        { name: 'aiueo', content: "() => { return 3; }", },
+        { name: 'hello', content: "() => { return 2; }", },
+        { name: 'fooya', content: "(a, b) => { console.log(a + b); }", },
+        { name: 'yahallo', content: "(a) => { console.log(a); }" },
     ]
 };

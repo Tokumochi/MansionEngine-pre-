@@ -1,7 +1,7 @@
 import { combineReducers, createStore } from 'redux';
 
 import { SelectKind, DoorState, RoomState, AppState, ProcessState } from './states';
-import { RoomsActionTypes } from './actions';
+import { RoomsActionTypes, ProcessesActionTypes } from './actions';
 
 // Recuder
 function SetDoorPositionReducer() {
@@ -57,38 +57,20 @@ function SelectReducer(kind: SelectKind) {
         }
     }
 }
-function SetProcessContent() {
-    return (state: RoomState, action: { type: string, payload: { id: string, content: string } } ): RoomState => {
-        return {
-            ...state,
-            doors: state.doors.map(door =>
-                (door.id == action.payload.id) ? {
-                    ...door,
-                    process_string: action.payload.content,
-                } : door
-            )
-        }
-    }
-}
 
 const defaultDoors: DoorState[] = [
-    {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, process_string: "() => { return 3; }", isCorridor: false, stairs: []},
-    {id: '2', name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, process_string: "() => { return 2; }", isCorridor: false, stairs: []},
-    {id: '3', name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, process_string: "(a, b) => { console.log(a + b); }", isCorridor: false, stairs: [{lower_id: '1', lower_x: 2, lower_y: 3}, {lower_id: '2', lower_x: 4, lower_y: 3}]},
-    {id: '4', name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, process_string: "(a) => { console.log(a); }", isCorridor: false, stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]},
+    {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, process_name: 'return3', isCorridor: false, stairs: []},
+    {id: '2', name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, process_name: 'return2', isCorridor: false, stairs: []},
+    {id: '3', name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, process_name: 'output_a_plus_b', isCorridor: false, stairs: [{lower_id: '1', lower_x: 2, lower_y: 3}, {lower_id: '2', lower_x: 4, lower_y: 3}]},
+    {id: '4', name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, process_name: 'output_a', isCorridor: false, stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]},
 ];
 
 const initialRoomsState: RoomState = {
     doors: defaultDoors,
     room_width: 10,
     room_height: 6,
-    //selected_door_id: -1,
     select_state: { select_kind: "Nothing", selected_door_id: '-1', selected_stair_index: -1 },
 };
-
-const initialProcessesState: ProcessState[] = [
-    { process_name: 'aiueo', process_content: 'aiueo' },
-];
 
 export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
     switch(action.type) {
@@ -102,15 +84,33 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
             return SelectReducer("Door")(state, action);
         case RoomsActionTypes.SELECT_STAIR:
             return SelectReducer("Stair")(state, action);
-        case RoomsActionTypes.SET_PROCESS_CONTENT:
-            return SetProcessContent()(state, action);
         default:
             return state;
     }
 };
 
+function SetProcessContent() {
+    return (state: ProcessState[], action: { type: string, payload: { name: string, content: string } } ): ProcessState[] => {
+        return state.map(process => 
+            process.name === action.payload.name ? {
+                ...process,
+                content: action.payload.content,
+            } : process
+        );
+    }
+}
+
+const initialProcessesState: ProcessState[] = [
+    { name: 'return3', content: "() => { return 3; }", },
+    { name: 'return2', content: "() => { return 2; }", },
+    { name: 'output_a_plus_b', content: "(a, b) => { console.log(a + b); }", },
+    { name: 'output_a', content: "(a) => { console.log(a); }" },
+];
+
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {
     switch(action.type) {
+        case ProcessesActionTypes.SET_PROCESS_CONTENT:
+            return SetProcessContent()(state, action);
         default: 
             return state;
     }

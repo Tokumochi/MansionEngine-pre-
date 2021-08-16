@@ -1,14 +1,15 @@
 import { FC, useState } from 'react';
 import { connect } from 'react-redux';
 import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { AppState, RoomState } from '../../lib/redux/states';
+import { AppState, ProcessState, RoomState } from '../../lib/redux/states';
 import { rooms_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
 import './Room.css';
-import { CombinedState } from 'redux';
 
-export interface RoomProps extends RoomState {
+export interface RoomProps {
+    room: RoomState,
+    processes: ProcessState[],
     onDoorPosChanged(id: string, x: number, y: number): void,
     onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
     onNothingSelected(): void,
@@ -16,7 +17,8 @@ export interface RoomProps extends RoomState {
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_state, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, processes, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+    const { doors, room_width, room_height, select_state } = room;
     const [ targetX, setTargetX ] = useState(-1);
     const [ targetY, setTargetY ] = useState(-1);
     const { select_kind, selected_door_id, selected_stair_index } = select_state;
@@ -57,7 +59,7 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
             </a>
             <rect className="save_button" cursor="pointer"
                 onClick={() => {
-                    localStorage.setItem('RoomCode', GenerateRoomCode(doors));
+                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, processes));
                 }
             }/>
             <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black" pointerEvents="none">保存</text>
@@ -67,10 +69,8 @@ export const Room: FC<RoomProps> = ( { doors, room_width, room_height, select_st
 
 export default connect(
     (props: AppState) => ({
-        doors: props.room.doors,
-        room_width: props.room.room_width,
-        room_height: props.room.room_height,
-        select_state: props.room.select_state,
+        room: props.room,
+        processes: props.processes,
     }),
     dispatch => ({
         onDoorPosChanged: (id: string, x: number, y: number) => dispatch(rooms_actions.setDoorPos(id, x, y)),

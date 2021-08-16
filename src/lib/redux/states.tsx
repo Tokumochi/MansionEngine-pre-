@@ -5,8 +5,8 @@ export type SelectKind = "Nothing" | "Door" | "Stair";
 
 // State
 export interface ProcessState {
-    process_name: string,
-    process_content: string,
+    name: string,
+    content: string,
 }
 
 export interface StairState {
@@ -19,7 +19,7 @@ export interface DoorState {
     name: string,
     kind: DoorKind,
     floor: number,
-    process_string: string,
+    process_name: string,
     x: number,
     y: number,
     isCorridor: boolean,

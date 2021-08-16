@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { DoorState, SelectState } from '../../lib/redux/states';
 
@@ -15,10 +15,10 @@ export interface DoorProps {
 }
 
 export const Door: FC<DoorProps> = ( { door, select_state, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: DoorProps ) => {
-    const { id, name, kind, x, y, isCorridor, stairs } = door;
+    const { id, name, kind, process_name, x, y, isCorridor, stairs } = door;
     const { select_kind, selected_door_id, selected_stair_index } = select_state;
     const door_border_color: string = ((select_kind === "Door" && selected_door_id === id) ? 'red' : 'lightblue');
-    const process_url: string = "/process/" + id;
+    const process_url: string = "/process/" + process_name;
     return (
         <>
             <rect className="door_base" 

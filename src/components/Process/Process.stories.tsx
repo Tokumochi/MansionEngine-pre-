@@ -11,12 +11,12 @@ const Template: Story<EditProcessProps> = (args) => <EditProcess {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-    id: '1',
-    process_content: 'aiueo',
+    name: '1',
+    content: 'aiueo',
 };
 
 export const Undefined = Template.bind({});
 Undefined.args = {
-    id: undefined,
-    process_content: undefined,
+    name: undefined,
+    content: undefined,
 };
