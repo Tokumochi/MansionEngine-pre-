@@ -1,12 +1,13 @@
 import { Provider } from 'react-redux';
 import { Story } from '@storybook/react';
+import { BrowserRouter } from 'react-router-dom';
 
 import store from './../../lib/redux/reducers';
 import { Sidebar } from './Sidebar';
 
 export default {
     component: Sidebar,
-    decorators: [(story: () => React.ReactNode) => <Provider store={store}>{story()}</Provider>],
+    decorators: [(story: () => React.ReactNode) => <Provider store={store}><BrowserRouter>{story()}</BrowserRouter></Provider>],
     title: 'Sidebar',
 };
 

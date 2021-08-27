@@ -14,9 +14,10 @@ const Template: Story<DoorProps> = (args) => <Door {...args} />;
 export const Default = Template.bind({});
 Default.args = {
     door: {id: '1', name: 'test', kind: "Room", floor: 2, process_name: "", x: 0, y: 0, isCorridor: false, stairs: []},
-    select_state: {
-        select_kind: "Nothing",
-        selected_door_id: '-1',
-        selected_stair_index: -1,
-    },
+    selector: {
+        selecting_kind: "Nothing",
+        selecting_name: "",
+        selecting_id: "-1",
+        selecting_index: -1,
+    }
 };

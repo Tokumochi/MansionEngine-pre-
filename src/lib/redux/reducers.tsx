@@ -1,7 +1,7 @@
 import { combineReducers, createStore } from 'redux';
 
-import { SelectKind, DoorState, RoomState, AppState, ProcessState } from './states';
-import { RoomsActionTypes, ProcessesActionTypes } from './actions';
+import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState } from './states';
+import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './actions';
 
 // Recuder
 function SetDoorPositionReducer() {
@@ -44,19 +44,6 @@ function ConnectStairReducer() {
         }
     }
 }
-function SelectReducer(kind: SelectKind) {
-    return (state: RoomState, action: { type: string, payload: { id: string, index: number } } ): RoomState => {
-        return {
-            ...state,
-            //selected_door_id: action.payload.id,
-            select_state: {
-                select_kind: kind,
-                selected_door_id: action.payload.id,
-                selected_stair_index: action.payload.index,
-            }
-        }
-    }
-}
 
 const defaultDoors: DoorState[] = [
     {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, process_name: 'return3', isCorridor: false, stairs: []},
@@ -69,7 +56,6 @@ const initialRoomsState: RoomState = {
     doors: defaultDoors,
     room_width: 10,
     room_height: 6,
-    select_state: { select_kind: "Nothing", selected_door_id: '-1', selected_stair_index: -1 },
 };
 
 export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
@@ -78,12 +64,6 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
             return SetDoorPositionReducer()(state, action);
         case RoomsActionTypes.CONNECT_STAIR:
             return ConnectStairReducer()(state, action);
-        case RoomsActionTypes.SELECT_NOTHING:
-            return SelectReducer("Nothing")(state, action);
-        case RoomsActionTypes.SELECT_DOOR:
-            return SelectReducer("Door")(state, action);
-        case RoomsActionTypes.SELECT_STAIR:
-            return SelectReducer("Stair")(state, action);
         default:
             return state;
     }
@@ -116,9 +96,41 @@ export const processes_reducer = (state: any = initialProcessesState, action: an
     }
 };
 
+function SelectSomething(kind: SelectedKind) {
+    return (state: SelectorState, action: { type: string, payload: { name: string, id: string, index: number } } ): SelectorState => {
+        return {
+            selecting_kind: kind,
+            selecting_name: action.payload.name,
+            selecting_id: action.payload.id,
+            selecting_index: action.payload.index,
+        }
+    }
+}
+
+const initialSelectorState: SelectorState = {
+    selecting_kind: "Nothing",
+    selecting_name: "",
+    selecting_id: "-1",
+    selecting_index: -1,
+};
+
+export const selector_reducer = (state: any = initialSelectorState, action: any): SelectorState => {
+    switch(action.type) {
+        case SelectorActionTypes.SELECT_NOTHING:
+            return SelectSomething("Nothing")(state, action);
+        case SelectorActionTypes.SELECT_DOOR:
+            return SelectSomething("Door")(state, action);
+        case SelectorActionTypes.SELECT_STAIR:
+            return SelectSomething("Stair")(state, action);
+        default:
+            return state;
+    }
+};
+
 const reducers = combineReducers<AppState>({
     room: rooms_reducer,
     processes: processes_reducer,
+    selector: selector_reducer,
 });
 
 export default createStore(reducers);
