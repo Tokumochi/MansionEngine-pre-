@@ -18,13 +18,15 @@ export const processes_actions = {
 }
 
 export enum SelectorActionTypes {
-    SELECT_NOTHING = "Selector/SELECT_NOTHING",
-    SELECT_DOOR    = "Selector/SELECT_DOOR",
-    SELECT_STAIR   = "Selector/SELECT_STAIR",
+    SELECT_NOTHING      = "Selector/SELECT_NOTHING",
+    SELECT_DOOR         = "Selector/SELECT_DOOR",
+    SELECT_STAIR        = "Selector/SELECT_STAIR",
+    SELECT_CONSTRUCTION = "Selector/SELECT_CONSTRUCTION",
 }
 
 export const selector_actions = {
-    selectNothing: ()                          => { return ({ type: SelectorActionTypes.SELECT_NOTHING, payload: { name: "", id: '-1', index: -1 } }) },
-    selectDoor:    (id: string)                => { return ({ type: SelectorActionTypes.SELECT_DOOR,    payload: { name: "", id: id, index: -1 } }) },
-    selectStair:   (id: string, index: number) => { return ({ type: SelectorActionTypes.SELECT_STAIR,   payload: { name: "", id: id, index: index } }) },
+    selectNothing:      ()                          => { return ({ type: SelectorActionTypes.SELECT_NOTHING,      payload: { name: "", id: '-1', index: -1 } }) },
+    selectDoor:         (id: string)                => { return ({ type: SelectorActionTypes.SELECT_DOOR,         payload: { name: "", id: id, index: -1 } }) },
+    selectStair:        (id: string, index: number) => { return ({ type: SelectorActionTypes.SELECT_STAIR,        payload: { name: "", id: id, index: index } }) },
+    selectConstruction: (name: string)              => { return ({ type: SelectorActionTypes.SELECT_CONSTRUCTION, payload: { name: name, id: '-1', index: -1 } }) },
 };
