@@ -11,6 +11,7 @@ export interface RoomProps {
     room: RoomState,
     processes: ProcessState[],
     selector: SelectorState,
+    onAddingNewDoor(process_name: string, x: number, y: number): void,
     onDoorPosChanged(id: string, x: number, y: number): void,
     onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
     onNothingSelected(): void,
@@ -18,11 +19,11 @@ export interface RoomProps {
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { room, processes, selector, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, processes, selector, onAddingNewDoor, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
     const [ targetX, setTargetX ] = useState(-1);
     const [ targetY, setTargetY ] = useState(-1);
-    const { selecting_kind, selecting_id, selecting_index } = selector;
+    const { selecting_kind, selecting_id, selecting_index, selecting_name } = selector;
     const url: string = "run.html";
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={room_width * 300} height={room_height * 150}>
@@ -41,8 +42,12 @@ export const Room: FC<RoomProps> = ( { room, processes, selector, onDoorPosChang
             <rect className="target" x={targetX * 300} y={targetY * 150}
                 //style={{left: targetX * 300, top: targetY * 150}}
                 onClick={() => {
-                    if(selecting_kind == "Door" && selecting_id !== '-1') {
+                    if(selecting_kind === "Door" && selecting_id !== '-1') {
                         onDoorPosChanged(selecting_id, targetX, targetY);
+                        onNothingSelected();
+                    } else
+                    if(selecting_kind === "Construction") {
+                        onAddingNewDoor(selecting_name, targetX, targetY);
                         onNothingSelected();
                     }
                 }}
@@ -75,6 +80,7 @@ export default connect(
         selector: props.selector,
     }),
     dispatch => ({
+        onAddingNewDoor: (process_name: string, x: number, y: number) => dispatch(rooms_actions.addNewDoor(process_name, x, y)),
         onDoorPosChanged: (id: string, x: number, y: number) => dispatch(rooms_actions.setDoorPos(id, x, y)),
         onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(rooms_actions.connectStair(upper_id, upper_index, lower_id)),
         onNothingSelected: () => dispatch(selector_actions.selectNothing()),

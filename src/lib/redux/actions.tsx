@@ -1,12 +1,14 @@
 // Actions
 export enum RoomsActionTypes {
+    ADD_NEW_DOOR        = 'Rooms/ADD_NEW_DOOR',
     SET_DOOR_POS        = 'Rooms/SET_DOOR_POS',
     CONNECT_STAIR       = 'Rooms/CONNECT_STAIR',
 }
 
 export const rooms_actions = {
-    setDoorPos:        (id: string, x: number, y: number)                        => { return ({ type: RoomsActionTypes.SET_DOOR_POS,        payload: { id: id, x: x, y: y } }) },
-    connectStair:      (upper_id: string, upper_index: number, lower_id: string) => { return ({ type: RoomsActionTypes.CONNECT_STAIR,       payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id } }) },
+    addNewDoor:        (process_name: string, x: number, y: number)              => { return ({ type: RoomsActionTypes.ADD_NEW_DOOR,  payload: { process_name: process_name, x: x, y: y } }) },
+    setDoorPos:        (id: string, x: number, y: number)                        => { return ({ type: RoomsActionTypes.SET_DOOR_POS,  payload: { id: id, x: x, y: y } }) },
+    connectStair:      (upper_id: string, upper_index: number, lower_id: string) => { return ({ type: RoomsActionTypes.CONNECT_STAIR, payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id } }) },
 };
 
 export enum ProcessesActionTypes {

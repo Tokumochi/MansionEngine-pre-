@@ -1,9 +1,28 @@
 import { combineReducers, createStore } from 'redux';
 
-import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState } from './states';
+import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState, DoorKind } from './states';
 import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './actions';
 
 // Recuder
+function AddNewDoorReducer() {
+    return (state: RoomState, action: { type: string, payload: { process_name: string, x: number, y: number } } ) => {
+        const doors_kind: DoorKind = "Process";
+        return {
+            ...state,
+            doors: [...state.doors, {
+                id: Math.random().toString(32).substring(2),
+                name: action.payload.process_name + '(clone)',
+                kind: doors_kind,
+                x: action.payload.x,
+                y: action.payload.y,
+                floor: 5,
+                process_name: action.payload.process_name,
+                isCorridor: false,
+                stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]
+            } ],
+        }
+    }
+}
 function SetDoorPositionReducer() {
     return (state: RoomState, action: { type: string, payload: { id: string, x: number, y: number } } ) => {
         return {
@@ -60,6 +79,8 @@ const initialRoomsState: RoomState = {
 
 export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
     switch(action.type) {
+        case RoomsActionTypes.ADD_NEW_DOOR:
+            return AddNewDoorReducer()(state, action);
         case RoomsActionTypes.SET_DOOR_POS:
             return SetDoorPositionReducer()(state, action);
         case RoomsActionTypes.CONNECT_STAIR:
