@@ -38,7 +38,6 @@ export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind
     );
 }
 
-
 export default connect(
     (props: AppState) => ({
         processes: props.processes,

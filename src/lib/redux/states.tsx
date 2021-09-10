@@ -50,6 +50,7 @@ export interface SelectorState {
 
 export interface AppState {
     room: RoomState,
+    datas: DataState[],
     processes: ProcessState[],
     selector: SelectorState,
 }

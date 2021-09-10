@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { DataState } from '../../lib/redux/states';
+import { connect } from 'react-redux';
+import { AppState, DataState } from '../../lib/redux/states';
 
 import './Storage.css';
 
@@ -24,3 +25,9 @@ export const Storage: FC<StorageProps> = ( { datas }: StorageProps ) => {
         </>
     );
 }
+
+export default connect(
+    (props: AppState) => ({
+        datas: props.datas,
+    }),
+)(Storage);

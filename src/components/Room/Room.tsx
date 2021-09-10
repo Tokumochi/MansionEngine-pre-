@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { connect } from 'react-redux';
 import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { AppState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
+import { AppState, DataState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
 import { rooms_actions, selector_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
@@ -9,6 +9,7 @@ import './Room.css';
 
 export interface RoomProps {
     room: RoomState,
+    datas: DataState[],
     processes: ProcessState[],
     selector: SelectorState,
     onAddingNewProcessDoor(process: ProcessState, x: number, y: number): void,
@@ -19,7 +20,7 @@ export interface RoomProps {
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { room, processes, selector, onAddingNewProcessDoor, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewProcessDoor, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
     const [ targetX, setTargetX ] = useState(-1);
     const [ targetY, setTargetY ] = useState(-1);
@@ -52,20 +53,20 @@ export const Room: FC<RoomProps> = ( { room, processes, selector, onAddingNewPro
                     }
                 }}
             />
-                { doors.map((door, index) =>
-                    {
+                { 
+                    doors.map((door, index) => {
                         return (
                             <Door key={index} door={door} selector={selector} onDoorPosChanged={onDoorPosChanged} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
                         );
-                    }
-                ) }
+                    }) 
+                }
             <a href={url} target="_blank">
                 <rect className="run_button"/>
                 <text x="75" y="50" textAnchor="middle" fontSize="20" fill="black">実行</text>
             </a>
             <rect className="save_button" cursor="pointer"
                 onClick={() => {
-                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, processes));
+                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, datas, processes));
                 }
             }/>
             <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black" pointerEvents="none">保存</text>
@@ -76,6 +77,7 @@ export const Room: FC<RoomProps> = ( { room, processes, selector, onAddingNewPro
 export default connect(
     (props: AppState) => ({
         room: props.room,
+        datas: props.datas,
         processes: props.processes,
         selector: props.selector,
     }),

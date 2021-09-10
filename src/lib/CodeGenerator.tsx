@@ -1,4 +1,4 @@
-import { DoorKind, DoorState, ProcessState } from "./redux/states";
+import { DoorKind, DoorState, DataState, ProcessState } from "./redux/states";
 
 interface InputState {
     id: string,
@@ -13,19 +13,13 @@ interface CodeState {
     inputs: InputState[],
 }
 
-export const GenerateRoomCode = (doors: DoorState[], processes: ProcessState[]) => {
-
-    const datas: string[] = [];
+export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], processes: ProcessState[]) => {
 
     const codeStates: CodeState[] = doors.map((door) => {
         const { id, kind, floor, ref_name, stairs } = door;
         const inputs: InputState[] = stairs.map((stair) => {
             return { id: stair.lower_id }
         });
-
-        if(kind === "Data") {
-            datas.push(ref_name);
-        }
 
         const data_name = (kind === "Data" ? ref_name : "");
         const process_content = (kind === "Process" ? processes.find(process => process.name === ref_name)?.content as string : "");
@@ -40,8 +34,11 @@ export const GenerateRoomCode = (doors: DoorState[], processes: ProcessState[]) 
 
     var code: string = "";
 
-    datas.forEach((data: string) => {
-        code += "const Data" + data + " = 0;\n";
+    console.log(111);
+
+    datas.forEach((data: DataState) => {
+        const { name, value } = data;
+        code += "const Data" + name + " = " + value + ";\n";
     });
 
     codeStates.forEach((state: CodeState) => {
