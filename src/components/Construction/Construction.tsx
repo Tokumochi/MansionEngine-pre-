@@ -9,22 +9,22 @@ import './Construction.css';
 export interface ConstructionProps {
     processes: ProcessState[],
     selecting_kind: SelectedKind,
-    selecting_name: string,
-    onConstructionSelected(name: string): void,
+    selecting_process: ProcessState,
+    onProcessSelected(process: ProcessState): void,
 }
 
-export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind, selecting_name, onConstructionSelected }: ConstructionProps ) => {
+export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind, selecting_process, onProcessSelected }: ConstructionProps ) => {
     return (
         <>
             {
                 processes.map((process) => {
                     const { name, content } = process;
                     const process_url: string = "/process/" + name;
-                    const main_color = ((selecting_kind === "Construction" && selecting_name === name) ? 'red' : '#ffaf65');
+                    const main_color = ((selecting_kind === "Process" && selecting_process.name === name) ? 'red' : '#ffaf65');
                     return (
                         <div className="construction" style={{background: main_color}}
                             onClick={() => {
-                                onConstructionSelected(name);
+                                onProcessSelected(process);
                             }}
                         >
                             <Link to={process_url}>
@@ -43,9 +43,9 @@ export default connect(
     (props: AppState) => ({
         processes: props.processes,
         selecting_kind: props.selector.selecting_kind,
-        selecting_name: props.selector.selecting_name,
+        selecting_process: props.selector.selecting_process,
     }),
     dispatch => ({
-        onConstructionSelected: (name: string) => dispatch(selector_actions.selectConstruction(name)),
+        onProcessSelected: (process: ProcessState) => dispatch(selector_actions.selectProcess(process)),
     }),
 )(Construction);

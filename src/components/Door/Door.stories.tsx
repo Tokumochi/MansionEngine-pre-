@@ -19,5 +19,6 @@ Default.args = {
         selecting_name: "",
         selecting_id: "-1",
         selecting_index: -1,
+        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
     }
 };

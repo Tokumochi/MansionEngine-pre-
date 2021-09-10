@@ -5,20 +5,20 @@ import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './a
 
 // Recuder
 function AddNewDoorReducer() {
-    return (state: RoomState, action: { type: string, payload: { process_name: string, x: number, y: number } } ) => {
+    return (state: RoomState, action: { type: string, payload: { process: ProcessState, x: number, y: number } } ) => {
         const doors_kind: DoorKind = "Process";
         return {
             ...state,
             doors: [...state.doors, {
                 id: Math.random().toString(32).substring(2),
-                name: action.payload.process_name + '(clone)',
+                name: action.payload.process.name + '(clone)',
                 kind: doors_kind,
                 x: action.payload.x,
                 y: action.payload.y,
-                floor: 5,
-                process_name: action.payload.process_name,
+                floor: action.payload.process.floor,
+                process_name: action.payload.process.name,
                 isCorridor: false,
-                stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]
+                stairs: Array.from(Array(action.payload.process.num_of_inputs), () => { return { lower_id: '-1', lower_x: -1, lower_y: -1 } }),
             } ],
         }
     }
@@ -102,10 +102,10 @@ function SetProcessContent() {
 }
 
 const initialProcessesState: ProcessState[] = [
-    { name: 'return3', content: "() => { return 3; }", },
-    { name: 'return2', content: "() => { return 2; }", },
-    { name: 'output_a_plus_b', content: "(a, b) => { console.log(a + b); }", },
-    { name: 'output_a', content: "(a) => { console.log(a); }" },
+    { name: 'return3', content: "() => { return 3; }", floor: 1, num_of_inputs: 0 },
+    { name: 'return2', content: "() => { return 2; }", floor: 1, num_of_inputs: 0 },
+    { name: 'output_a_plus_b', content: "(a, b) => { console.log(a + b); }", floor: 2, num_of_inputs: 2 },
+    { name: 'output_a', content: "(a) => { console.log(a); }", floor: 2, num_of_inputs: 1 },
 ];
 
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {
@@ -118,12 +118,13 @@ export const processes_reducer = (state: any = initialProcessesState, action: an
 };
 
 function SelectSomething(kind: SelectedKind) {
-    return (state: SelectorState, action: { type: string, payload: { name: string, id: string, index: number } } ): SelectorState => {
+    return (state: SelectorState, action: { type: string, payload: { name: string, id: string, index: number, process: ProcessState } } ): SelectorState => {
         return {
             selecting_kind: kind,
             selecting_name: action.payload.name,
             selecting_id: action.payload.id,
             selecting_index: action.payload.index,
+            selecting_process: action.payload.process,
         }
     }
 }
@@ -133,6 +134,7 @@ const initialSelectorState: SelectorState = {
     selecting_name: "",
     selecting_id: "-1",
     selecting_index: -1,
+    selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
 };
 
 export const selector_reducer = (state: any = initialSelectorState, action: any): SelectorState => {
@@ -143,8 +145,8 @@ export const selector_reducer = (state: any = initialSelectorState, action: any)
             return SelectSomething("Door")(state, action);
         case SelectorActionTypes.SELECT_STAIR:
             return SelectSomething("Stair")(state, action);
-        case SelectorActionTypes.SELECT_CONSTRUCTION:
-            return SelectSomething("Construction")(state, action);
+        case SelectorActionTypes.SELECT_PROCESS:
+            return SelectSomething("Process")(state, action);
         default:
             return state;
     }

@@ -14,9 +14,9 @@ const Template: Story<ConstructionProps> = (args) => <Construction {...args} />;
 export const Default = Template.bind({});
 Default.args = {
     processes: [
-        { name: 'aiueo', content: "() => { return 3; }", },
-        { name: 'hello', content: "() => { return 2; }", },
-        { name: 'fooya', content: "(a, b) => { console.log(a + b); }", },
-        { name: 'yahallo', content: "(a) => { console.log(a); }" },
+        { name: 'aiueo', content: "() => { return 3; }", floor: 1, num_of_inputs: 0 },
+        { name: 'hello', content: "() => { return 2; }", floor: 1, num_of_inputs: 0 },
+        { name: 'fooya', content: "(a, b) => { console.log(a + b); }", floor: 2, num_of_inputs: 2 },
+        { name: 'yahallo', content: "(a) => { console.log(a); }", floor: 2, num_of_inputs: 1 },
     ]
 };

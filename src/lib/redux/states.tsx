@@ -1,12 +1,14 @@
 // Kind
 export type DoorKind = "Data" | "Process" | "Room";
 
-export type SelectedKind = "Nothing" | "Door" | "Stair" | "Construction";
+export type SelectedKind = "Nothing" | "Door" | "Stair" | "Process";
 
 // State
 export interface ProcessState {
     name: string,
     content: string,
+    floor: number,
+    num_of_inputs: number,
 }
 
 export interface StairState {
@@ -38,6 +40,7 @@ export interface SelectorState {
     selecting_name: string,
     selecting_id: string,
     selecting_index: number,
+    selecting_process: ProcessState,
 }
 
 export interface AppState {
