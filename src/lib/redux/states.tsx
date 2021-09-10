@@ -11,6 +11,11 @@ export interface ProcessState {
     num_of_inputs: number,
 }
 
+export interface DataState {
+    name: string,
+    value: number,
+}
+
 export interface StairState {
     lower_id: string,
     lower_x: number,
@@ -22,7 +27,7 @@ export interface DoorState {
     name: string,
     kind: DoorKind,
     floor: number,
-    process_name: string,
+    ref_name: string,
     x: number,
     y: number,
     isCorridor: boolean,

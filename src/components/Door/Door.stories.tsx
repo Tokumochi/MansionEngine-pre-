@@ -11,9 +11,31 @@ export default {
 
 const Template: Story<DoorProps> = (args) => <Door {...args} />;
 
-export const Default = Template.bind({});
-Default.args = {
-    door: {id: '1', name: 'test', kind: "Room", floor: 2, process_name: "", x: 0, y: 0, isCorridor: false, stairs: []},
+export const Process = Template.bind({});
+Process.args = {
+    door: {id: '1', name: 'process', kind: "Process", floor: 2, process_name: "", x: 0, y: 0, isCorridor: false, stairs: []},
+    selector: {
+        selecting_kind: "Nothing",
+        selecting_name: "",
+        selecting_id: "-1",
+        selecting_index: -1,
+        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+    }
+};
+export const Data = Template.bind({});
+Data.args = {
+    door: {id: '2', name: 'data', kind: "Data", floor: 2, process_name: "", x: 0, y: 0, isCorridor: false, stairs: []},
+    selector: {
+        selecting_kind: "Door",
+        selecting_name: "",
+        selecting_id: "2",
+        selecting_index: -1,
+        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+    }
+};
+export const Room = Template.bind({});
+Room.args = {
+    door: {id: '3', name: 'room', kind: "Room", floor: 2, process_name: "", x: 0, y: 0, isCorridor: false, stairs: []},
     selector: {
         selecting_kind: "Nothing",
         selecting_name: "",

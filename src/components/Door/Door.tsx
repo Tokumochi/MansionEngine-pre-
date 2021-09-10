@@ -15,16 +15,28 @@ export interface DoorProps {
 }
 
 export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: DoorProps ) => {
-    const { id, name, kind, process_name, x, y, isCorridor, stairs } = door;
+    const { id, name, kind, ref_name, x, y, isCorridor, stairs } = door;
     const { selecting_kind, selecting_name, selecting_id, selecting_index } = selector;
 
-    const door_border_color: string = ((selecting_kind === "Door" && selecting_id === id) ? 'red' : 'lightblue');
-    const process_url: string = "/process/" + process_name;
+    const door_color: string = (() => {
+        switch (kind) {
+            case "Data":
+                return "#b8d200";
+            case "Process":
+                return "#00afcc";
+            case "Room":
+                return "#0095d9";
+            default:
+                return "red";
+        }
+    })();
+    const door_border_color: string = ((selecting_kind === "Door" && selecting_id === id) ? 'red' : door_color);
+    const process_url: string = "/process/" + ref_name;
     
     return (
         <>
             <rect className="door_base" 
-                x={300 * x + 50} y={150 * y + 25} stroke={door_border_color}
+                x={300 * x + 50} y={150 * y + 25} fill={door_color} stroke={door_border_color}
                 onClick={() => {
                     onDoorSelected(id);
                 }

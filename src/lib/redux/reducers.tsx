@@ -16,7 +16,7 @@ function AddNewDoorReducer() {
                 x: action.payload.x,
                 y: action.payload.y,
                 floor: action.payload.process.floor,
-                process_name: action.payload.process.name,
+                ref_name: action.payload.process.name,
                 isCorridor: false,
                 stairs: Array.from(Array(action.payload.process.num_of_inputs), () => { return { lower_id: '-1', lower_x: -1, lower_y: -1 } }),
             } ],
@@ -65,10 +65,12 @@ function ConnectStairReducer() {
 }
 
 const defaultDoors: DoorState[] = [
-    {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, process_name: 'return3', isCorridor: false, stairs: []},
-    {id: '2', name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, process_name: 'return2', isCorridor: false, stairs: []},
-    {id: '3', name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, process_name: 'output_a_plus_b', isCorridor: false, stairs: [{lower_id: '1', lower_x: 2, lower_y: 3}, {lower_id: '2', lower_x: 4, lower_y: 3}]},
-    {id: '4', name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, process_name: 'output_a', isCorridor: false, stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]},
+    {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, ref_name: 'return3', isCorridor: false, stairs: []},
+    {id: '2', name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, ref_name: 'return2', isCorridor: false, stairs: []},
+    {id: '3', name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, ref_name: 'output_a_plus_b', isCorridor: false, stairs: [{lower_id: '1', lower_x: 2, lower_y: 3}, {lower_id: '2', lower_x: 4, lower_y: 3}]},
+    {id: '4', name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, ref_name: 'output_a', isCorridor: false, stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]},
+    {id: '5', name: 'test5', kind: "Data", x: 1, y: 4, floor: 1, ref_name: '3', isCorridor: false, stairs: []},
+    {id: '6', name: 'test6', kind: "Data", x: 3, y: 4, floor: 1, ref_name: '2', isCorridor: false, stairs: []},
 ];
 
 const initialRoomsState: RoomState = {
