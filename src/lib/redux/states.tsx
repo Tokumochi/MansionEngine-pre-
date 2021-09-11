@@ -3,17 +3,17 @@ export type DoorKind = "Data" | "Process" | "Room";
 
 export type SelectedKind = "Nothing" | "Door" | "Stair" | "Data" | "Process";
 
-// State
-export interface ProcessState {
-    name: string,
-    content: string,
-    floor: number,
-    num_of_inputs: number,
-}
-
+// States
 export interface DataState {
     name: string,
     value: number,
+}
+
+export interface ProcessState {
+    name: string,
+    content: string,
+    num_of_inputs: number,
+    floor: number,
 }
 
 export interface StairState {

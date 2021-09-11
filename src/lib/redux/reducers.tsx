@@ -4,15 +4,34 @@ import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorSta
 import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './actions';
 
 // Recuder
-function AddNewDoorReducer() {
-    return (state: RoomState, action: { type: string, payload: { process: ProcessState, x: number, y: number } } ) => {
-        const doors_kind: DoorKind = "Process";
+function AddNewDataDoorReducer() {
+    return (state: RoomState, action: { type: string, payload: { ref_name: string, x: number, y: number } } ) => {
+        const door_kind: DoorKind = "Data";
         return {
             ...state,
             doors: [...state.doors, {
                 id: Math.random().toString(32).substring(2),
-                name: action.payload.process.name + '(clone)',
-                kind: doors_kind,
+                name: action.payload.ref_name + '(data)',
+                kind: door_kind,
+                x: action.payload.x,
+                y: action.payload.y,
+                floor: 0,
+                ref_name: action.payload.ref_name,
+                isCorridor: false,
+                stairs: [],
+            } ],
+        }
+    }
+}
+function AddNewProcessDoorReducer() {
+    return (state: RoomState, action: { type: string, payload: { process: ProcessState, x: number, y: number } } ) => {
+        const door_kind: DoorKind = "Process";
+        return {
+            ...state,
+            doors: [...state.doors, {
+                id: Math.random().toString(32).substring(2),
+                name: action.payload.process.name + '(process)',
+                kind: door_kind,
                 x: action.payload.x,
                 y: action.payload.y,
                 floor: action.payload.process.floor,
@@ -81,8 +100,10 @@ const initialRoomsState: RoomState = {
 
 export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
     switch(action.type) {
-        case RoomsActionTypes.ADD_NEW_DOOR:
-            return AddNewDoorReducer()(state, action);
+        case RoomsActionTypes.ADD_NEW_DATA_DOOR:
+            return AddNewDataDoorReducer()(state, action);
+        case RoomsActionTypes.ADD_NEW_PROCESS_DOOR:
+            return AddNewProcessDoorReducer()(state, action);
         case RoomsActionTypes.SET_DOOR_POS:
             return SetDoorPositionReducer()(state, action);
         case RoomsActionTypes.CONNECT_STAIR:

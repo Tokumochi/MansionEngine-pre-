@@ -2,15 +2,17 @@ import { DataState, ProcessState } from './states';
 
 // Actions
 export enum RoomsActionTypes {
-    ADD_NEW_DOOR        = 'Rooms/ADD_NEW_DOOR',
-    SET_DOOR_POS        = 'Rooms/SET_DOOR_POS',
-    CONNECT_STAIR       = 'Rooms/CONNECT_STAIR',
+    ADD_NEW_DATA_DOOR    = 'Rooms/ADD_NEW_DATA_DOOR',
+    ADD_NEW_PROCESS_DOOR = 'Rooms/ADD_NEW_PROCESS_DOOR',
+    SET_DOOR_POS         = 'Rooms/SET_DOOR_POS',
+    CONNECT_STAIR        = 'Rooms/CONNECT_STAIR',
 }
 
 export const rooms_actions = {
-    addNewDoor:        (process: ProcessState, x: number, y: number)             => { return ({ type: RoomsActionTypes.ADD_NEW_DOOR,  payload: { process: process, x: x, y: y } }) },
-    setDoorPos:        (id: string, x: number, y: number)                        => { return ({ type: RoomsActionTypes.SET_DOOR_POS,  payload: { id: id, x: x, y: y } }) },
-    connectStair:      (upper_id: string, upper_index: number, lower_id: string) => { return ({ type: RoomsActionTypes.CONNECT_STAIR, payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id } }) },
+    addNewDataDoor:    (ref_name: string, x: number, y: number)                  => { return ({ type: RoomsActionTypes.ADD_NEW_DATA_DOOR,    payload: { ref_name: ref_name, x: x, y: y } }) },
+    addNewProcessDoor: (process: ProcessState, x: number, y: number)             => { return ({ type: RoomsActionTypes.ADD_NEW_PROCESS_DOOR, payload: { process: process, x: x, y: y } }) },
+    setDoorPos:        (id: string, x: number, y: number)                        => { return ({ type: RoomsActionTypes.SET_DOOR_POS,         payload: { id: id, x: x, y: y } }) },
+    connectStair:      (upper_id: string, upper_index: number, lower_id: string) => { return ({ type: RoomsActionTypes.CONNECT_STAIR,        payload: { upper_id: upper_id, upper_index: upper_index, lower_id: lower_id } }) },
 };
 
 export enum ProcessesActionTypes {
