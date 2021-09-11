@@ -160,6 +160,8 @@ export const selector_reducer = (state: any = initialSelectorState, action: any)
             return SelectSomething("Door")(state, action);
         case SelectorActionTypes.SELECT_STAIR:
             return SelectSomething("Stair")(state, action);
+        case SelectorActionTypes.SELECT_DATA:
+            return SelectSomething("Data")(state, action);
         case SelectorActionTypes.SELECT_PROCESS:
             return SelectSomething("Process")(state, action);
         default:

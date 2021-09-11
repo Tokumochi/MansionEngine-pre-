@@ -7,8 +7,8 @@ import './Sidebar.css';
 export const Sidebar: FC = () => {
     return (
         <div className='side-bar'>
-            <Construction />
             <Storage />
+            <Construction />
         </div>
     );
 }

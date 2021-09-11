@@ -1,4 +1,4 @@
-import { ProcessState } from './states';
+import { DataState, ProcessState } from './states';
 
 // Actions
 export enum RoomsActionTypes {
@@ -25,6 +25,7 @@ export enum SelectorActionTypes {
     SELECT_NOTHING = "Selector/SELECT_NOTHING",
     SELECT_DOOR    = "Selector/SELECT_DOOR",
     SELECT_STAIR   = "Selector/SELECT_STAIR",
+    SELECT_DATA    = "Selector/SELECT_DATA", 
     SELECT_PROCESS = "Selector/SELECT_PROCESS",
 }
 
@@ -32,5 +33,6 @@ export const selector_actions = {
     selectNothing: ()                          => { return ({ type: SelectorActionTypes.SELECT_NOTHING, payload: { name: "", id: '-1', index: -1, process: null } }) },
     selectDoor:    (id: string)                => { return ({ type: SelectorActionTypes.SELECT_DOOR,    payload: { name: "", id: id, index: -1, process: null } }) },
     selectStair:   (id: string, index: number) => { return ({ type: SelectorActionTypes.SELECT_STAIR,   payload: { name: "", id: id, index: index, process: null } }) },
+    selectData:    (name: string)              => { return ({ type: SelectorActionTypes.SELECT_DATA,    payload: { name: name, id: '-1', index: -1, process: null } }) },
     selectProcess: (process: ProcessState)     => { return ({ type: SelectorActionTypes.SELECT_PROCESS, payload: { name: "", id: '-1', index: -1, process: process } }) },
 };
