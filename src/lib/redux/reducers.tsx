@@ -83,14 +83,7 @@ function ConnectStairReducer() {
     }
 }
 
-const defaultDoors: DoorState[] = [
-    {id: '1', name: 'test1', kind: "Process", x: 2, y: 3, floor: 1, ref_name: 'return3', isCorridor: false, stairs: []},
-    {id: '2', name: 'test2', kind: "Process", x: 4, y: 3, floor: 1, ref_name: 'return2', isCorridor: false, stairs: []},
-    {id: '3', name: 'test3', kind: "Process", x: 3, y: 1, floor: 2, ref_name: 'output_a_plus_b', isCorridor: false, stairs: [{lower_id: '1', lower_x: 2, lower_y: 3}, {lower_id: '2', lower_x: 4, lower_y: 3}]},
-    {id: '4', name: 'test4', kind: "Process", x: 1, y: 1, floor: 3, ref_name: 'output_a', isCorridor: false, stairs: [{lower_id: '-1', lower_x: -1, lower_y: -1}]},
-    {id: '5', name: 'test5', kind: "Data", x: 1, y: 4, floor: 1, ref_name: 'data_10', isCorridor: false, stairs: []},
-    {id: '6', name: 'test6', kind: "Data", x: 3, y: 4, floor: 1, ref_name: 'data__7', isCorridor: false, stairs: []},
-];
+const defaultDoors: DoorState[] = [];
 
 const initialRoomsState: RoomState = {
     doors: defaultDoors,
@@ -114,9 +107,8 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
 };
 
 const initialDatasState: DataState[] = [
-    { name: 'data_10', value: 10 },
-    { name: 'data_121', value: 121 },
-    { name: 'data__7', value: -7 },
+    { name: 'ball_x', value: 400 },
+    { name: 'ball_y', value: 300 },
 ];
 
 export const datas_reducer = (state: any = initialDatasState, action: any): DataState[] => {
@@ -138,10 +130,11 @@ function SetProcessContent() {
 }
 
 const initialProcessesState: ProcessState[] = [
-    { name: 'return3', content: "() => { return 3; }", floor: 1, num_of_inputs: 0 },
-    { name: 'return2', content: "() => { return 2; }", floor: 1, num_of_inputs: 0 },
-    { name: 'output_a_plus_b', content: "(a, b) => { console.log(a + b); }", floor: 2, num_of_inputs: 2 },
-    { name: 'output_a', content: "(a) => { console.log(a); }", floor: 2, num_of_inputs: 1 },
+    { name: 'distance', content: "(a_x, b_x, a_y, b_y) => { return Math.sqrt(Math.pow(a_x - b_x, 2) + Math.pow(a_y - b_y, 2)); }", floor: 2, num_of_inputs: 4 },
+    { name: 'update_ball_x', content: "(x) => { x += 2; return Databall_x = x; }", floor: 1, num_of_inputs: 1 },
+    { name: 'update_ball_y', content: "(y) => { y += 2; return Databall_y = y; }", floor: 1, num_of_inputs: 1 },
+    { name: 'fill_back', content: "() => { const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background); }", floor: 2, num_of_inputs: 0 },
+    { name: 'fill_ball', content: "(x, y) => { const circle = new Path2D(); circle.arc(x, y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 3, num_of_inputs: 2 },
 ];
 
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {

@@ -34,12 +34,19 @@ export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], process
 
     var code: string = "";
 
-    console.log(111);
-
     datas.forEach((data: DataState) => {
         const { name, value } = data;
-        code += "const Data" + name + " = " + value + ";\n";
+        code += "var Data" + name + " = " + value + ";\n";
     });
+
+    code += "const canvas = document.createElement('canvas');\n";
+    code += "canvas.width = 800;\n";
+    code += "canvas.height = 600;\n";
+    code += "document.body.appendChild(canvas);\n";
+    code += "const ctx = canvas.getContext('2d');\n";
+    
+    code += "const tick = () => {\n";
+    code += "requestAnimationFrame(tick);\n";
 
     codeStates.forEach((state: CodeState) => {
         switch(state.kind) {
@@ -56,6 +63,9 @@ export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], process
                 break;
         }
     });
+
+    code += "};\n";
+    code += "tick();\n";
 
     return code;
 };
