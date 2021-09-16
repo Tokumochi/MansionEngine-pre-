@@ -37,6 +37,7 @@ export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], process
     datas.forEach((data: DataState) => {
         const { name, value } = data;
         code += "var Data" + name + " = " + value + ";\n";
+        code += "function Set" + name + "(val) { Data" + name + " = val; }\n";
     });
 
     code += "const canvas = document.createElement('canvas');\n";

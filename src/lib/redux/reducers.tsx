@@ -87,8 +87,8 @@ const defaultDoors: DoorState[] = [];
 
 const initialRoomsState: RoomState = {
     doors: defaultDoors,
-    room_width: 10,
-    room_height: 6,
+    room_width: 2000,
+    room_height: 1000,
 };
 
 export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
@@ -109,6 +109,9 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
 const initialDatasState: DataState[] = [
     { name: 'ball_x', value: 400 },
     { name: 'ball_y', value: 300 },
+    { name: 'ball_velocity_x', value: 4 },
+    { name: 'ball_velocity_y', value: 3 },
+    { name: 'ball_acceleration', value: 1 },
 ];
 
 export const datas_reducer = (state: any = initialDatasState, action: any): DataState[] => {
@@ -131,10 +134,12 @@ function SetProcessContent() {
 
 const initialProcessesState: ProcessState[] = [
     { name: 'distance', content: "(a_x, b_x, a_y, b_y) => { return Math.sqrt(Math.pow(a_x - b_x, 2) + Math.pow(a_y - b_y, 2)); }", floor: 2, num_of_inputs: 4 },
-    { name: 'update_ball_x', content: "(x) => { x += 2; return Databall_x = x; }", floor: 1, num_of_inputs: 1 },
-    { name: 'update_ball_y', content: "(y) => { y += 2; return Databall_y = y; }", floor: 1, num_of_inputs: 1 },
-    { name: 'fill_back', content: "() => { const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background); }", floor: 2, num_of_inputs: 0 },
-    { name: 'fill_ball', content: "(x, y) => { const circle = new Path2D(); circle.arc(x, y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 3, num_of_inputs: 2 },
+    { name: 'add', content: "(p, v) => { return p + v; }", floor: 2, num_of_inputs: 2 },
+    { name: 'fill_back', content: "() => { const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background); }", floor: 3, num_of_inputs: 0 },
+    { name: 'fill_ball', content: "(x, y) => { const circle = new Path2D(); circle.arc(x, y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 4, num_of_inputs: 2 },
+    { name: 'update_ball_x', content: "(x) => { Setball_x(x); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball_y', content: "(y) => { Setball_y(y); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball_velocity_x', content: "(v) => { Setball_velocity_x(v); }", floor: 4, num_of_inputs: 1 },
 ];
 
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {

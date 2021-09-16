@@ -36,16 +36,16 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onStair
     return (
         <>
             <rect className="door_base" 
-                x={300 * x + 50} y={150 * y + 25} fill={door_color} stroke={door_border_color}
+                x={x - 100} y={y - 50} fill={door_color} stroke={door_border_color}
                 onClick={() => {
                     onDoorSelected(id);
                 }
             }> 
             </rect>
             <Link to={process_url} >
-                <text x={300 * x + 150} y={150 * y + 75} textAnchor="middle" fontSize="30" fill="black">{name}</text>
+                <text x={x} y={y} textAnchor="middle" fontSize="30" fill="black">{name}</text>
             </Link>
-            <circle className="output_point" cx={300 * x + 150} cy={150 * y + 25} r="13"
+            <circle className="output_point" cx={x} cy={y - 50} r="13"
                 onClick={() => {
                     if(selecting_kind === "Stair") {
                         onStairConnected(selecting_id, selecting_index, id);
@@ -56,14 +56,14 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onStair
             { stairs.map((stair, index) =>
                 {
                     const { lower_id, lower_x, lower_y } = stair;
-                    const offset_x = 50 + (index + 1) * 200 / (stairs.length + 1);
+                    const offset_x = (index + 1) * 200 / (stairs.length + 1) - 100;
                     const input_point_color: string = ((selecting_kind === "Stair" && selecting_id === id && selecting_index === index) ? 'red' : 'darkseagreen');
                     return (
                         <>
                             { lower_id === '-1' ? <></> :
-                                <line className="stair" key={'l' + index} x1={300 * x + offset_x} y1={150 * y + 125} x2={300 * lower_x + 150} y2={150 * lower_y + 25}/>
+                                <line className="stair" key={'l' + index} x1={x + offset_x} y1={y + 50} x2={lower_x} y2={lower_y - 50}/>
                             }
-                            <circle key={'c' + index} className="input_point" cx={300 * x + offset_x} cy={150 * y + 125} r="13" fill={input_point_color}
+                            <circle key={'c' + index} className="input_point" cx={x + offset_x} cy={y + 50} r="13" fill={input_point_color}
                                 onClick={() => {
                                     onStairSelected(id, index);
                                 }}

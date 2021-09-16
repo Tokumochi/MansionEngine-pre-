@@ -23,48 +23,36 @@ export interface RoomProps {
 
 export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
-    const [ targetX, setTargetX ] = useState(-1);
-    const [ targetY, setTargetY ] = useState(-1);
     const { selecting_kind, selecting_id, selecting_index, selecting_name, selecting_process } = selector;
     const url: string = "run.html";
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={room_width * 300} height={room_height * 150}>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={room_width} height={room_height}>
             <rect className="board"
-                //style={{width: room_width * 300, height: room_height * 150}}
-                width={room_width * 300} height={room_height * 150} fill="#eef"
-                onMouseMove={e => {
-                    const newTargetX: number = Math.floor(e.nativeEvent.offsetX / 300);
-                    const newTargetY: number = Math.floor(e.nativeEvent.offsetY / 150);
-                    if(targetX !== newTargetX || targetY !== newTargetY) {
-                        setTargetX(newTargetX);
-                        setTargetY(newTargetY);
-                    }
-                }}
-            />
-            <rect className="target" x={targetX * 300} y={targetY * 150}
-                //style={{left: targetX * 300, top: targetY * 150}}
-                onClick={() => {
+                width={room_width} height={room_height} fill="#eef"
+                onClick={(e) => {
                     if(selecting_kind === "Door" && selecting_id !== '-1') {
-                        onDoorPosChanged(selecting_id, targetX, targetY);
+                        onDoorPosChanged(selecting_id, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                         onNothingSelected();
                     } else
                     if(selecting_kind == "Data") {
-                        onAddingNewDataDoor(selecting_name, targetX, targetY);
+                        onAddingNewDataDoor(selecting_name, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                         onNothingSelected();
                     } else
                     if(selecting_kind === "Process") {
-                        onAddingNewProcessDoor(selecting_process, targetX, targetY);
+                        onAddingNewProcessDoor(selecting_process, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                         onNothingSelected();
                     }
                 }}
             />
-                { 
-                    doors.map((door, index) => {
-                        return (
-                            <Door key={index} door={door} selector={selector} onDoorPosChanged={onDoorPosChanged} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
-                        );
-                    }) 
-                }
+
+            { 
+                doors.map((door, index) => {
+                    return (
+                        <Door key={index} door={door} selector={selector} onDoorPosChanged={onDoorPosChanged} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
+                    );
+                }) 
+            }
+
             <a href={url} target="_blank">
                 <rect className="run_button"/>
                 <text x="75" y="50" textAnchor="middle" fontSize="20" fill="black">実行</text>
