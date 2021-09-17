@@ -57,6 +57,24 @@ function SetDoorPositionReducer() {
         }
     }
 }
+function DeleteDoorReducer() {
+    return (state: RoomState, action: { type: string, payload: { id: string } } ) => {
+        return {
+            ...state,
+            doors: state.doors.filter(door => {
+                return door.id !== action.payload.id;
+            })
+            .map(door => {
+                return {
+                    ...door,
+                    stairs: door.stairs.map(stair =>
+                        stair.lower_id === action.payload.id ? { lower_id: '-1', lower_x: -1, lower_y: -1 } : stair
+                    ),
+                }
+            }),
+        }
+    }
+}
 function ConnectStairReducer() {
     return (state: RoomState, action: { type: string, payload: { upper_id: string, upper_index: number, lower_id: string } } ): RoomState => {
         const lower_door = state.doors.find(door => door.id === action.payload.lower_id);
@@ -99,6 +117,8 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
             return AddNewProcessDoorReducer()(state, action);
         case RoomsActionTypes.SET_DOOR_POS:
             return SetDoorPositionReducer()(state, action);
+        case RoomsActionTypes.DELETE_DOOR:
+            return DeleteDoorReducer()(state, action);
         case RoomsActionTypes.CONNECT_STAIR:
             return ConnectStairReducer()(state, action);
         default:

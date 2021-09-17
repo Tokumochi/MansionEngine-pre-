@@ -1,3 +1,4 @@
+import { arch } from 'os';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { DoorState, SelectorState } from '../../lib/redux/states';
@@ -8,13 +9,14 @@ export interface DoorProps {
     door: DoorState,
     selector: SelectorState,
     onDoorPosChanged(id: string, x: number, y: number): void,
+    onDeleteDoor(id: string): void,
     onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
     onNothingSelected(): void,
     onDoorSelected(id: string): void,
     onStairSelected(id: string, index: number): void,
 }
 
-export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: DoorProps ) => {
+export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: DoorProps ) => {
     const { id, name, kind, ref_name, x, y, isCorridor, stairs } = door;
     const { selecting_kind, selecting_name, selecting_id, selecting_index } = selector;
 
@@ -45,6 +47,11 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onStair
             <Link to={process_url} >
                 <text x={x} y={y} textAnchor="middle" fontSize="30" fill="black">{name}</text>
             </Link>
+            <circle className="delete_button" cx={x + 90} cy={y - 40} r="10"
+                onClick={() => {
+                    onDeleteDoor(id);
+                }}
+            />
             <circle className="output_point" cx={x} cy={y - 50} r="13"
                 onClick={() => {
                     if(selecting_kind === "Stair") {

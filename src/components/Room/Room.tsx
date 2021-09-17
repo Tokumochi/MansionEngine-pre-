@@ -15,13 +15,14 @@ export interface RoomProps {
     onAddingNewDataDoor(ref_name: string, x: number, y: number): void,
     onAddingNewProcessDoor(process: ProcessState, x: number, y: number): void,
     onDoorPosChanged(id: string, x: number, y: number): void,
+    onDeleteDoor(id: string): void,
     onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
     onNothingSelected(): void,
     onDoorSelected(id: string): void,
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
     const { selecting_kind, selecting_id, selecting_index, selecting_name, selecting_process } = selector;
     const url: string = "run.html";
@@ -48,7 +49,7 @@ export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddin
             { 
                 doors.map((door, index) => {
                     return (
-                        <Door key={index} door={door} selector={selector} onDoorPosChanged={onDoorPosChanged} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
+                        <Door key={index} door={door} selector={selector} onDoorPosChanged={onDoorPosChanged} onDeleteDoor={onDeleteDoor} onStairConnected={onStairConnected} onNothingSelected={onNothingSelected} onDoorSelected={onDoorSelected} onStairSelected={onStairSelected}/>
                     );
                 }) 
             }
@@ -78,6 +79,7 @@ export default connect(
         onAddingNewDataDoor: (ref_name: string, x: number, y: number) => dispatch(rooms_actions.addNewDataDoor(ref_name, x, y)),
         onAddingNewProcessDoor: (process: ProcessState, x: number, y: number) => dispatch(rooms_actions.addNewProcessDoor(process, x, y)),
         onDoorPosChanged: (id: string, x: number, y: number) => dispatch(rooms_actions.setDoorPos(id, x, y)),
+        onDeleteDoor: (id: string) => dispatch(rooms_actions.deleteDoor(id)),
         onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(rooms_actions.connectStair(upper_id, upper_index, lower_id)),
         onNothingSelected: () => dispatch(selector_actions.selectNothing()),
         onDoorSelected: (id: string) => dispatch(selector_actions.selectDoor(id)),
