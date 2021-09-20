@@ -37,7 +37,7 @@ export const EditProcess: FC<EditProcessProps> = ( { name, content, onProcessCon
     return (
         <div>
             <text>{ name }</text><br/>
-            <textarea value={ content } onChange={(e) => onProcessContentChanged(name, e.target.value)} />
+            <textarea rows={100} cols={100} value={ content } onChange={(e) => onProcessContentChanged(name, e.target.value)} />
         </div>
     );
 }

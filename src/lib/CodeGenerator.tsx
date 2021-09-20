@@ -1,4 +1,4 @@
-import { DoorKind, DoorState, DataState, ProcessState } from "./redux/states";
+import { DoorKind, DoorState, DataState, ProcessState, StructState } from "./redux/states";
 
 interface InputState {
     id: string,
@@ -13,7 +13,7 @@ interface CodeState {
     inputs: InputState[],
 }
 
-export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], processes: ProcessState[]) => {
+export const GenerateRoomCode = (doors: DoorState[], structs: StructState[], datas: DataState[], processes: ProcessState[]) => {
 
     const codeStates: CodeState[] = doors.map((door) => {
         const { id, kind, floor, ref_name, stairs } = door;
@@ -35,8 +35,18 @@ export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], process
     var code: string = "";
 
     datas.forEach((data: DataState) => {
-        const { name, value } = data;
-        code += "var Data" + name + " = " + value + ";\n";
+        const { name, type, value } = data;
+        if(type === "Number") {
+            code += "var Data" + name + " = " + value + ";\n";
+        } else {
+            const struct_type = structs.find(struct => struct.name === type);
+            const value_array = value as Number[];
+            code += "var Data" + name + " = { ";
+            struct_type?.members.forEach((member, index) => {
+                code += member.name + ": " + value_array[index] + ", ";
+            });
+            code += "};\n";
+        }
         code += "function Set" + name + "(val) { Data" + name + " = val; }\n";
     });
 

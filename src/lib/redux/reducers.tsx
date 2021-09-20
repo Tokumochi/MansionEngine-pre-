@@ -1,6 +1,6 @@
 import { combineReducers, createStore } from 'redux';
 
-import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState, DoorKind, DataState } from './states';
+import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState, DoorKind, DataState, StructState } from './states';
 import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './actions';
 
 // Recuder
@@ -126,12 +126,26 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
     }
 };
 
+const initialStructsState: StructState[] = [
+    { name: "Vector2d", members: [
+        { name: "x", type: "Number" },
+        { name: "y", type: "Number" },
+    ] },
+];
+
+export const structs_reducer = (state: any = initialStructsState, action: any): StructState[] => {
+    switch(action.type) {
+        default:
+            return state;
+    }
+};
+
 const initialDatasState: DataState[] = [
-    { name: 'ball_x', value: 400 },
-    { name: 'ball_y', value: 300 },
-    { name: 'ball_velocity_x', value: 4 },
-    { name: 'ball_velocity_y', value: 3 },
-    { name: 'ball_acceleration', value: 1 },
+    { name: 'ball1_position', type: "Vector2d", value: [400, 300] },
+    { name: 'ball2_position', type: "Vector2d", value: [200, 200] },
+    { name: 'ball1_velocity', type: "Vector2d", value: [0, 0] },
+    { name: 'ball2_velocity', type: "Vector2d", value: [4, 3] },
+    { name: 'ball_acceleration', type: "Number", value: 1 },
 ];
 
 export const datas_reducer = (state: any = initialDatasState, action: any): DataState[] => {
@@ -153,13 +167,33 @@ function SetProcessContent() {
 }
 
 const initialProcessesState: ProcessState[] = [
-    { name: 'distance', content: "(a_x, b_x, a_y, b_y) => { return Math.sqrt(Math.pow(a_x - b_x, 2) + Math.pow(a_y - b_y, 2)); }", floor: 2, num_of_inputs: 4 },
-    { name: 'add', content: "(p, v) => { return p + v; }", floor: 2, num_of_inputs: 2 },
+    { name: 'isCollision', content: "(a, b) => { return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) <= Math.pow(50 + 50, 2); ", floor: 2, num_of_inputs: 2 },
+    { name: 'length', content: "(a, b) => { return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)); }", floor: 2, num_of_inputs: 2 },
+    { name: 'distance', content: "(a, b) => { return { x: a.x - b.x, y: a.y - b.y }", floor: 2, num_of_inputs: 2 },
+    { name: 'normal', content: "(d, l) => { return { x: d.x / l, y: d.y / l }", floor: 3, num_of_inputs: 2 },
+    { name: 'add_vector2d', content: "(p, v) => { return { x: p.x + v.x, y: p.y + v.y } }", floor: 3, num_of_inputs: 2 },
+    { name: 'sub_vector2d', content: "(p, v) => { return { x: p.x - v.x, y: p.y - v.y } }", floor: 3, num_of_inputs: 2 },
+    { name: 'Impulse', 
+      content: 
+        "(a_pos, b_pos, a_vel, b_vel) => {\n" +
+        "   if(Math.pow(a_pos.x - b_pos.x, 2) + Math.pow(a_pos.y - b_pos.y, 2) <= Math.pow(50 + 50, 2)) {\n" +
+        "       const relativeVelocity = Math.sqrt(Math.pow(b_vel.x - a_vel.x, 2) + Math.pow(b_vel.y - a_vel.y, 2));\n" +
+        "       const d = { x: b_pos.x - a_pos.x, y: b_pos.y - a_pos.y };\n" +
+        "       const len = Math.sqrt(d.x * d.x + d.y * d.y);\n" +
+        "       const collisionNormal = { x: d.x / len, y: d.y / len };\n" +
+        "       const J = - relativeVelocity * (1 + 1) / (1 / 1 + 1 / 1);\n" +
+        "       return { x: J * collisionNormal.x / 1, y: J * collisionNormal.y / 1 };\n" +
+        "   }\n" +
+        "   return { x: 0, y: 0 };\n" +
+        "}",
+      floor: 2, num_of_inputs: 4
+    },
     { name: 'fill_back', content: "() => { const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background); }", floor: 3, num_of_inputs: 0 },
-    { name: 'fill_ball', content: "(x, y) => { const circle = new Path2D(); circle.arc(x, y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 4, num_of_inputs: 2 },
-    { name: 'update_ball_x', content: "(x) => { Setball_x(x); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball_y', content: "(y) => { Setball_y(y); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball_velocity_x', content: "(v) => { Setball_velocity_x(v); }", floor: 4, num_of_inputs: 1 },
+    { name: 'fill_ball_vector2d', content: "(v) => { const circle = new Path2D(); circle.arc(v.x, v.y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball1_position', content: "(pos) => { Setball1_position(pos); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball2_position', content: "(pos) => { Setball2_position(pos); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball1_velocity', content: "(v) => { Setball1_velocity(v); }", floor: 4, num_of_inputs: 1 },
+    { name: 'update_ball2_velocity', content: "(v) => { Setball2_velocity(v); }", floor: 4, num_of_inputs: 1 },
 ];
 
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {
@@ -210,6 +244,7 @@ export const selector_reducer = (state: any = initialSelectorState, action: any)
 
 const reducers = combineReducers<AppState>({
     room: rooms_reducer,
+    structs: structs_reducer,
     datas: datas_reducer,
     processes: processes_reducer,
     selector: selector_reducer,

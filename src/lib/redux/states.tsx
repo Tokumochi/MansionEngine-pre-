@@ -4,9 +4,15 @@ export type DoorKind = "Data" | "Process" | "Room";
 export type SelectedKind = "Nothing" | "Door" | "Stair" | "Data" | "Process";
 
 // States
+export interface StructState {
+    name: string,
+    members: { name: string, type: string }[],
+}
+
 export interface DataState {
     name: string,
-    value: number,
+    type: string,
+    value: Number | Number[],
 }
 
 export interface ProcessState {
@@ -50,6 +56,7 @@ export interface SelectorState {
 
 export interface AppState {
     room: RoomState,
+    structs: StructState[],
     datas: DataState[],
     processes: ProcessState[],
     selector: SelectorState,
