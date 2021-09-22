@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { connect } from 'react-redux';
 import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { AppState, DataState, ProcessState, RoomState, SelectorState, StructState } from '../../lib/redux/states';
+import { AppState, DataState, DoorState, ProcessState, RoomState, SelectorState, StructState } from '../../lib/redux/states';
 import { rooms_actions, selector_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
@@ -17,7 +17,7 @@ export interface RoomProps {
     onAddingNewProcessDoor(process: ProcessState, x: number, y: number): void,
     onDoorPosChanged(id: string, x: number, y: number): void,
     onDeleteDoor(id: string): void,
-    onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
+    onStairConnected(upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number): void,
     onNothingSelected(): void,
     onDoorSelected(id: string): void,
     onStairSelected(id: string, index: number): void,
@@ -82,7 +82,7 @@ export default connect(
         onAddingNewProcessDoor: (process: ProcessState, x: number, y: number) => dispatch(rooms_actions.addNewProcessDoor(process, x, y)),
         onDoorPosChanged: (id: string, x: number, y: number) => dispatch(rooms_actions.setDoorPos(id, x, y)),
         onDeleteDoor: (id: string) => dispatch(rooms_actions.deleteDoor(id)),
-        onStairConnected: (upper_id: string, upper_index: number, lower_id: string) => dispatch(rooms_actions.connectStair(upper_id, upper_index, lower_id)),
+        onStairConnected: (upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number) => dispatch(rooms_actions.connectStair(upper_id, upper_index, lower_door, lower_index)),
         onNothingSelected: () => dispatch(selector_actions.selectNothing()),
         onDoorSelected: (id: string) => dispatch(selector_actions.selectDoor(id)),
         onStairSelected: (id: string, index: number) => dispatch(selector_actions.selectStair(id, index)),

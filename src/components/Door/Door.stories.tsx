@@ -13,34 +13,34 @@ const Template: Story<DoorProps> = (args) => <Door {...args} />;
 
 export const Process = Template.bind({});
 Process.args = {
-    door: {id: '1', name: 'process', kind: "Process", floor: 2, ref_name: "", x: 300, y: 300, isCorridor: false, stairs: []},
+    door: {id: '1', name: 'process', kind: "Process", floor: 2, ref_name: "", x: 300, y: 300, isCorridor: false, stairs: [], num_of_output: 0},
     selector: {
         selecting_kind: "Nothing",
         selecting_name: "",
         selecting_id: "-1",
         selecting_index: -1,
-        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+        selecting_process: { name: '', content: "", floor: -1, inputs: [], outputs: [] },
     }
 };
 export const Data = Template.bind({});
 Data.args = {
-    door: {id: '2', name: 'data', kind: "Data", floor: 2, ref_name: "", x: 600, y: 300, isCorridor: false, stairs: []},
+    door: {id: '2', name: 'data', kind: "Data", floor: 2, ref_name: "", x: 600, y: 300, isCorridor: false, stairs: [], num_of_output: 1},
     selector: {
         selecting_kind: "Door",
         selecting_name: "",
         selecting_id: "2",
         selecting_index: -1,
-        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+        selecting_process: { name: '', content: "", floor: -1, inputs: [], outputs: [] },
     }
 };
 export const Room = Template.bind({});
 Room.args = {
-    door: {id: '3', name: 'room', kind: "Room", floor: 2, ref_name: "", x: 300, y: 300, isCorridor: false, stairs: []},
+    door: {id: '3', name: 'room', kind: "Room", floor: 2, ref_name: "", x: 300, y: 300, isCorridor: false, stairs: [], num_of_output: 2},
     selector: {
         selecting_kind: "Nothing",
         selecting_name: "",
         selecting_id: "-1",
         selecting_index: -1,
-        selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+        selecting_process: { name: '', content: "", floor: -1, inputs: [], outputs: [] },
     }
 };

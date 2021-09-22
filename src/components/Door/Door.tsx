@@ -10,14 +10,14 @@ export interface DoorProps {
     selector: SelectorState,
     onDoorPosChanged(id: string, x: number, y: number): void,
     onDeleteDoor(id: string): void,
-    onStairConnected(upper_id: string, upper_index: number, lower_id: string): void,
+    onStairConnected(upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number): void,
     onNothingSelected(): void,
     onDoorSelected(id: string): void,
     onStairSelected(id: string, index: number): void,
 }
 
 export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: DoorProps ) => {
-    const { id, name, kind, ref_name, x, y, isCorridor, stairs } = door;
+    const { id, name, kind, ref_name, x, y, isCorridor, stairs, num_of_output } = door;
     const { selecting_kind, selecting_name, selecting_id, selecting_index } = selector;
 
     const door_color: string = (() => {
@@ -52,25 +52,33 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onDelet
                     onDeleteDoor(id);
                 }}
             />
-            <circle className="output_point" cx={x} cy={y - 50} r="13"
-                onClick={() => {
-                    if(selecting_kind === "Stair") {
-                        onStairConnected(selecting_id, selecting_index, id);
-                        onNothingSelected();
-                    }
-                }}
-            />
+            { Array.from({ length: num_of_output }).map((_, index) =>
+                {
+                    const offset_x = (index + 1) * 200 / (num_of_output + 1) - 100;
+                    return (
+                        <circle key={'o' + index} className="output_point" cx={x + offset_x} cy={y - 50} r="13"
+                            onClick={() => {
+                                if(selecting_kind === "Stair") {
+                                    onStairConnected(selecting_id, selecting_index, door, index);
+                                    onNothingSelected();
+                                }
+                            }}
+                        />
+                    );
+                }
+            ) }
             { stairs.map((stair, index) =>
                 {
-                    const { lower_id, lower_x, lower_y } = stair;
-                    const offset_x = (index + 1) * 200 / (stairs.length + 1) - 100;
+                    const { lower_door, lower_index } = stair;
+                    const upper_offset_x = (index + 1) * 200 / (stairs.length + 1) - 100;
+                    const lower_offset_x = lower_door === undefined ? -1 : (lower_index + 1) * 200 / (lower_door.num_of_output + 1) - 100;
                     const input_point_color: string = ((selecting_kind === "Stair" && selecting_id === id && selecting_index === index) ? 'red' : 'darkseagreen');
                     return (
                         <>
-                            { lower_id === '-1' ? <></> :
-                                <line className="stair" key={'l' + index} x1={x + offset_x} y1={y + 50} x2={lower_x} y2={lower_y - 50}/>
+                            { lower_door === undefined ? <></> :
+                                <line className="stair" key={'l' + index} x1={x + upper_offset_x} y1={y + 50} x2={lower_door.x + lower_offset_x} y2={lower_door.y - 50}/>
                             }
-                            <circle key={'c' + index} className="input_point" cx={x + offset_x} cy={y + 50} r="13" fill={input_point_color}
+                            <circle key={'c' + index} className="input_point" cx={x + upper_offset_x} cy={y + 50} r="13" fill={input_point_color}
                                 onClick={() => {
                                     onStairSelected(id, index);
                                 }}

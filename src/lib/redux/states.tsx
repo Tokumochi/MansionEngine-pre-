@@ -18,14 +18,14 @@ export interface DataState {
 export interface ProcessState {
     name: string,
     content: string,
-    num_of_inputs: number,
+    inputs: { name: string, type: string }[],
+    outputs: { name: string, type: string }[],
     floor: number,
 }
 
 export interface StairState {
-    lower_id: string,
-    lower_x: number,
-    lower_y: number,
+    lower_door: DoorState | undefined,
+    lower_index: number,
 }
 
 export interface DoorState {
@@ -38,6 +38,7 @@ export interface DoorState {
     y: number,
     isCorridor: boolean,
     stairs: StairState[],
+    num_of_output: number,
 }
 
 export interface RoomState {

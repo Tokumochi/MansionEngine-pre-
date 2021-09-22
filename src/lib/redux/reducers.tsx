@@ -19,6 +19,7 @@ function AddNewDataDoorReducer() {
                 ref_name: action.payload.ref_name,
                 isCorridor: false,
                 stairs: [],
+                num_of_output: 1,
             } ],
         }
     }
@@ -37,7 +38,8 @@ function AddNewProcessDoorReducer() {
                 floor: action.payload.process.floor,
                 ref_name: action.payload.process.name,
                 isCorridor: false,
-                stairs: Array.from(Array(action.payload.process.num_of_inputs), () => { return { lower_id: '-1', lower_x: -1, lower_y: -1 } }),
+                stairs: Array.from(Array(action.payload.process.inputs.length), () => { return { lower_door: undefined, lower_index: -1 } }),
+                num_of_output: action.payload.process.outputs.length,
             } ],
         }
     }
@@ -49,8 +51,15 @@ function SetDoorPositionReducer() {
             doors: state.doors.map(door =>
                 door.id === action.payload.id ? { ...door, x: action.payload.x, y: action.payload.y } : {
                     ...door,
-                    stairs: door.stairs.map(stair =>
-                        stair.lower_id === action.payload.id ? { ...stair, lower_x: action.payload.x, lower_y: action.payload.y } : stair
+                    stairs: door.stairs.map(stair => 
+                        ( stair.lower_door !== undefined && stair.lower_door.id === action.payload.id ) ? {
+                            ...stair,
+                            lower_door: {
+                                ...stair.lower_door,
+                                x: action.payload.x,
+                                y: action.payload.y
+                            } 
+                        }: stair
                     ),
                 }
             ),
@@ -68,7 +77,7 @@ function DeleteDoorReducer() {
                 return {
                     ...door,
                     stairs: door.stairs.map(stair =>
-                        stair.lower_id === action.payload.id ? { lower_id: '-1', lower_x: -1, lower_y: -1 } : stair
+                        (stair.lower_door !== undefined && stair.lower_door.id === action.payload.id) ? { lower_door: undefined, lower_index: -1 } : stair
                     ),
                 }
             }),
@@ -76,16 +85,8 @@ function DeleteDoorReducer() {
     }
 }
 function ConnectStairReducer() {
-    return (state: RoomState, action: { type: string, payload: { upper_id: string, upper_index: number, lower_id: string } } ): RoomState => {
-        const lower_door = state.doors.find(door => door.id === action.payload.lower_id);
-
-        if(lower_door === undefined) {
-            return state;
-        }
-
-        const lower_floor: number = (lower_door as DoorState).floor;
-        const lower_x: number = (lower_door as DoorState).x;
-        const lower_y: number = (lower_door as DoorState).y;
+    return (state: RoomState, action: { type: string, payload: { upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number } } ): RoomState => {
+        const lower_floor: number = action.payload.lower_door.floor;
 
         return {
             ...state,
@@ -93,7 +94,7 @@ function ConnectStairReducer() {
                 (door.id === action.payload.upper_id && lower_floor < door.floor) ? {
                     ...door,
                     stairs: door.stairs.map((stair, index) =>
-                        (index === action.payload.upper_index) ? { lower_id: action.payload.lower_id, lower_x: lower_x, lower_y: lower_y } : stair
+                        (index === action.payload.upper_index) ? { lower_door: action.payload.lower_door, lower_index: action.payload.lower_index } : stair
                     ),
                 } : door
             ),
@@ -167,33 +168,52 @@ function SetProcessContent() {
 }
 
 const initialProcessesState: ProcessState[] = [
-    { name: 'isCollision', content: "(a, b) => { return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) <= Math.pow(50 + 50, 2); ", floor: 2, num_of_inputs: 2 },
-    { name: 'length', content: "(a, b) => { return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)); }", floor: 2, num_of_inputs: 2 },
-    { name: 'distance', content: "(a, b) => { return { x: a.x - b.x, y: a.y - b.y }", floor: 2, num_of_inputs: 2 },
-    { name: 'normal', content: "(d, l) => { return { x: d.x / l, y: d.y / l }", floor: 3, num_of_inputs: 2 },
-    { name: 'add_vector2d', content: "(p, v) => { return { x: p.x + v.x, y: p.y + v.y } }", floor: 3, num_of_inputs: 2 },
-    { name: 'sub_vector2d', content: "(p, v) => { return { x: p.x - v.x, y: p.y - v.y } }", floor: 3, num_of_inputs: 2 },
     { name: 'Impulse', 
       content: 
-        "(a_pos, b_pos, a_vel, b_vel) => {\n" +
-        "   if(Math.pow(a_pos.x - b_pos.x, 2) + Math.pow(a_pos.y - b_pos.y, 2) <= Math.pow(50 + 50, 2)) {\n" +
-        "       const relativeVelocity = Math.sqrt(Math.pow(b_vel.x - a_vel.x, 2) + Math.pow(b_vel.y - a_vel.y, 2));\n" +
-        "       const d = { x: b_pos.x - a_pos.x, y: b_pos.y - a_pos.y };\n" +
-        "       const len = Math.sqrt(d.x * d.x + d.y * d.y);\n" +
-        "       const collisionNormal = { x: d.x / len, y: d.y / len };\n" +
-        "       const J = - relativeVelocity * (1 + 1) / (1 / 1 + 1 / 1);\n" +
-        "       return { x: J * collisionNormal.x / 1, y: J * collisionNormal.y / 1 };\n" +
-        "   }\n" +
-        "   return { x: 0, y: 0 };\n" +
-        "}",
-      floor: 2, num_of_inputs: 4
+        "if(Math.pow(a_pos.x - b_pos.x, 2) + Math.pow(a_pos.y - b_pos.y, 2) <= Math.pow(50 + 50, 2)) {\n" +
+        "    const relativeVelocity = Math.sqrt(Math.pow(b_vel.x - a_vel.x, 2) + Math.pow(b_vel.y - a_vel.y, 2));\n" +
+        "    const d = { x: b_pos.x - a_pos.x, y: b_pos.y - a_pos.y };\n" +
+        "    const len = Math.sqrt(d.x * d.x + d.y * d.y);\n" +
+        "    const collisionNormal = { x: d.x / len, y: d.y / len };\n" +
+        "    const J = - relativeVelocity * (1 + 1) / (1 / 1 + 1 / 1);\n" +
+        "    updated_a_vel = { x: a_vel.x + J * collisionNormal.x / 1, y: a_vel.y + J * collisionNormal.y / 1 };\n" +
+        "    updated_b_vel = { x: b_vel.x - J * collisionNormal.x / 1, y: b_pos.y - J * collisionNormal.y / 1 };\n" +
+        "} else {\n" +
+        "    updated_a_vel = a_pos;\n" +
+        "    updated_b_vel = b_pos;\n" +
+        "}\n",
+      floor: 2,
+      inputs: [ { name: "a_pos", type: "Vector2d" }, { name: "b_pos", type: "Vector2d" }, { name: "a_vel", type: "Vector2d" }, { name: "b_vel", type: "Vector2d" } ],
+      outputs: [ { name: "updated_a_vel", type: "Vector2d" }, { name: "updated_b_vel", type: "Vector2d" } ]
     },
-    { name: 'fill_back', content: "() => { const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background); }", floor: 3, num_of_inputs: 0 },
-    { name: 'fill_ball_vector2d', content: "(v) => { const circle = new Path2D(); circle.arc(v.x, v.y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball1_position', content: "(pos) => { Setball1_position(pos); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball2_position', content: "(pos) => { Setball2_position(pos); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball1_velocity', content: "(v) => { Setball1_velocity(v); }", floor: 4, num_of_inputs: 1 },
-    { name: 'update_ball2_velocity', content: "(v) => { Setball2_velocity(v); }", floor: 4, num_of_inputs: 1 },
+    { name: 'add', content: "c = a + b;\n", floor: 2,
+      inputs: [ { name: "a", type: "Number" }, { name: "b", type: "Number" } ],
+      outputs: [ { name: "c", type: "Number" } ]
+    },
+    { name: 'add_vector2d', content: "c = { x: a.x + b.x, y: a.y + b.y };\n", floor: 3,
+      inputs: [ { name: "a", type: "Vector2d" }, { name: "b", type: "Vector2d" } ],
+      outputs: [ { name: "c", type: "Vector2d" } ]
+    },
+    { name: 'sub_vector2d', content: "c = { x: a.x - b.x, y: a.y - b.y };\n", floor: 3,
+      inputs: [ { name: "a", type: "Vector2d" }, { name: "b", type: "Vector2d" } ],
+      outputs: [ { name: "c", type: "Vector2d" } ]
+    },
+    { name: 'fill_back', content: "const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background);\n", floor: 3, inputs: [], outputs: [] },
+    { name: 'fill_ball_vector2d', content: "const circle = new Path2D(); circle.arc(v.x, v.y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle);\n", floor: 4,
+      inputs: [ { name: "v", type: "Vector2d" } ], outputs: [] 
+    },
+    { name: 'update_ball1_position', content: "Setball1_position(pos);\n", floor: 4,
+      inputs: [ { name: "pos", type: "Vector2d" } ], outputs: []
+    },
+    { name: 'update_ball2_position', content: "Setball2_position(pos);\n", floor: 4,
+      inputs: [ { name: "pos", type: "Vector2d" } ], outputs: []
+    },
+    { name: 'update_ball1_velocity', content: "Setball1_velocity(vel);\n", floor: 4,
+      inputs: [ { name: "vel", type: "Vector2d" } ], outputs: []
+    },
+    { name: 'update_ball2_velocity', content: "Setball2_velocity(vel);\n", floor: 4,
+      inputs: [ { name: "vel", type: "Vector2d" } ], outputs: [] 
+    },
 ];
 
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {
@@ -222,7 +242,7 @@ const initialSelectorState: SelectorState = {
     selecting_name: "",
     selecting_id: "-1",
     selecting_index: -1,
-    selecting_process: { name: '', content: "", floor: -1, num_of_inputs: 0 },
+    selecting_process: { name: '', content: "", floor: -1, inputs: [], outputs: [] },
 };
 
 export const selector_reducer = (state: any = initialSelectorState, action: any): SelectorState => {
