@@ -1,3 +1,4 @@
+import { GenerateInitVar } from "./module";
 import { DoorKind, DoorState, DataState, ProcessState, StructState } from "./redux/states";
 
 interface InputState {
@@ -52,17 +53,7 @@ export const GenerateRoomCode = (doors: DoorState[], structs: StructState[], dat
 
     datas.forEach((data: DataState) => {
         const { name, type, value } = data;
-        if(type === "Number") {
-            code += "var Data" + name + " = " + value + ";\n";
-        } else {
-            const struct_type = structs.find(struct => struct.name === type);
-            const value_array = value as Number[];
-            code += "var Data" + name + " = { ";
-            struct_type?.members.forEach((member, index) => {
-                code += member.name + ": " + value_array[index] + ", ";
-            });
-            code += "};\n";
-        }
+        code += "var Data" + name + " = " + (GenerateInitVar(type, structs, value) as [string, number])[0] + ";\n";
         code += "function Set" + name + "(val) { Data" + name + " = val; }\n";
     });
 

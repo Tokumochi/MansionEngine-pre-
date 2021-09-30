@@ -16,11 +16,11 @@ export const Storage: FC<StorageProps> = ( { datas, selecting_kind, selecting_na
     return (
         <>
             {
-                datas.map((data) => {
+                datas.map((data, index) => {
                     const { name, value } = data;
                     const main_color = ((selecting_kind === "Data" && selecting_name === name) ? 'red' : '#b8d200');
                     return (
-                        <div className="data" style={{background: main_color}}
+                        <div key={index} className="data" style={{background: main_color}}
                             onClick={() => {
                                 onDataSelected(name);
                             }}

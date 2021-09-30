@@ -12,7 +12,7 @@ export interface StructState {
 export interface DataState {
     name: string,
     type: string,
-    value: Number | Number[],
+    value: Number[],
 }
 
 export interface ProcessState {

@@ -132,6 +132,13 @@ const initialStructsState: StructState[] = [
         { name: "x", type: "Number" },
         { name: "y", type: "Number" },
     ] },
+    { name: "Rigidbody2d", members: [
+      { name: "position", type: "Vector2d" },
+      { name: "velocity", type: "Vector2d" },
+      { name: "radius", type: "Number" },
+      { name: "mass", type: "Number" },
+      { name: "bounce", type: "Number" },
+    ] },
 ];
 
 export const structs_reducer = (state: any = initialStructsState, action: any): StructState[] => {
@@ -142,11 +149,9 @@ export const structs_reducer = (state: any = initialStructsState, action: any): 
 };
 
 const initialDatasState: DataState[] = [
-    { name: 'ball1_position', type: "Vector2d", value: [400, 300] },
-    { name: 'ball2_position', type: "Vector2d", value: [200, 200] },
-    { name: 'ball1_velocity', type: "Vector2d", value: [0, 0] },
-    { name: 'ball2_velocity', type: "Vector2d", value: [4, 3] },
-    { name: 'ball_acceleration', type: "Number", value: 1 },
+    { name: 'ball1', type: "Rigidbody2d", value: [400, 300, 0, 0, 50, 200, 0.5] },
+    { name: 'ball2', type: "Rigidbody2d", value: [200, 200, 4, 3, 80, 100, 0.5] },
+    { name: 'ball_acceleration', type: "Number", value: [1] },
 ];
 
 export const datas_reducer = (state: any = initialDatasState, action: any): DataState[] => {
@@ -168,25 +173,33 @@ function SetProcessContent() {
 }
 
 const initialProcessesState: ProcessState[] = [
+    { name: 'move_ball',
+      content:
+        "ball.position.x += ball.velocity.x;\n" +
+        "ball.position.y += ball.velocity.y;\n" +
+        "moved_ball = ball;\n",
+      floor: 2,
+      inputs: [ { name: "ball", type: "Rigidbody2d" } ],
+      outputs: [ { name: "moved_ball", type: "Rigidbody2d" } ],
+    },
     { name: 'Impulse', 
       content: 
-        "if(Math.pow(a_pos.x - b_pos.x, 2) + Math.pow(a_pos.y - b_pos.y, 2) <= Math.pow(50 + 50, 2)) {\n" +
-        "    const relativeVelocity = Math.sqrt(Math.pow(b_vel.x - a_vel.x, 2) + Math.pow(b_vel.y - a_vel.y, 2));\n" +
-        "    const d = { x: b_pos.x - a_pos.x, y: b_pos.y - a_pos.y };\n" +
+        "updated_a = a;" +
+        "updated_b = b;" +
+        "if(Math.pow(a.position.x - b.position.x, 2) + Math.pow(a.position.y - b.position.y, 2) <= Math.pow(a.radius + b.radius, 2)) {\n" +
+        "    const relativeVelocity = Math.sqrt(Math.pow(b.velocity.x - a.velocity.x, 2) + Math.pow(b.velocity.y - a.velocity.y, 2));\n" +
+        "    const d = { x: b.position.x - a.position.x, y: b.position.y - a.position.y };\n" +
         "    const len = Math.sqrt(d.x * d.x + d.y * d.y);\n" +
         "    const collisionNormal = { x: d.x / len, y: d.y / len };\n" +
-        "    const J = - relativeVelocity * (1 + 1) / (1 / 1 + 1 / 1);\n" +
-        "    updated_a_vel = { x: a_vel.x + J * collisionNormal.x / 1, y: a_vel.y + J * collisionNormal.y / 1 };\n" +
-        "    updated_b_vel = { x: b_vel.x - J * collisionNormal.x / 1, y: b_pos.y - J * collisionNormal.y / 1 };\n" +
-        "} else {\n" +
-        "    updated_a_vel = a_pos;\n" +
-        "    updated_b_vel = b_pos;\n" +
+        "    const J = - relativeVelocity * (a.bounce + b.bounce) / (1 / a.mass + 1 / b.mass);\n" +
+        "    updated_a.velocity = { x: a.velocity.x + J * collisionNormal.x / a.mass, y: a.velocity.y + J * collisionNormal.y / a.mass };\n" +
+        "    updated_b.velocity = { x: b.velocity.x - J * collisionNormal.x / b.mass, y: b.velocity.y - J * collisionNormal.y / b.mass };\n" +
         "}\n",
-      floor: 2,
-      inputs: [ { name: "a_pos", type: "Vector2d" }, { name: "b_pos", type: "Vector2d" }, { name: "a_vel", type: "Vector2d" }, { name: "b_vel", type: "Vector2d" } ],
-      outputs: [ { name: "updated_a_vel", type: "Vector2d" }, { name: "updated_b_vel", type: "Vector2d" } ]
+      floor: 5,
+      inputs: [ { name: "a", type: "Rigidbody2d" }, { name: "b", type: "Rigidbody2d" } ],
+      outputs: [ { name: "updated_a", type: "Vector2d" }, { name: "updated_b", type: "Vector2d" } ]
     },
-    { name: 'add', content: "c = a + b;\n", floor: 2,
+    { name: 'add', content: "c = a + b;\n", floor: 3,
       inputs: [ { name: "a", type: "Number" }, { name: "b", type: "Number" } ],
       outputs: [ { name: "c", type: "Number" } ]
     },
@@ -198,21 +211,15 @@ const initialProcessesState: ProcessState[] = [
       inputs: [ { name: "a", type: "Vector2d" }, { name: "b", type: "Vector2d" } ],
       outputs: [ { name: "c", type: "Vector2d" } ]
     },
-    { name: 'fill_back', content: "const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background);\n", floor: 3, inputs: [], outputs: [] },
-    { name: 'fill_ball_vector2d', content: "const circle = new Path2D(); circle.arc(v.x, v.y, 50, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle);\n", floor: 4,
-      inputs: [ { name: "v", type: "Vector2d" } ], outputs: [] 
+    { name: 'fill_back', content: "const background = new Path2D(); background.rect(0, 0, 800, 600); ctx.fillStyle = 'black'; ctx.fill(background);\n", floor: 9, inputs: [], outputs: [] },
+    { name: 'fill_ball', content: "const circle = new Path2D(); circle.arc(ball.position.x, ball.position.y, ball.radius, 0, 2 * Math.PI); ctx.fillStyle = 'blue'; ctx.fill(circle);\n", floor: 10,
+      inputs: [ { name: "ball", type: "Rigidbody2d" } ], outputs: [] 
     },
-    { name: 'update_ball1_position', content: "Setball1_position(pos);\n", floor: 4,
-      inputs: [ { name: "pos", type: "Vector2d" } ], outputs: []
+    { name: 'update_ball1', content: "Setball1(ball);\n", floor: 10,
+      inputs: [ { name: "ball", type: "Rigidbody2d" } ], outputs: []
     },
-    { name: 'update_ball2_position', content: "Setball2_position(pos);\n", floor: 4,
-      inputs: [ { name: "pos", type: "Vector2d" } ], outputs: []
-    },
-    { name: 'update_ball1_velocity', content: "Setball1_velocity(vel);\n", floor: 4,
-      inputs: [ { name: "vel", type: "Vector2d" } ], outputs: []
-    },
-    { name: 'update_ball2_velocity', content: "Setball2_velocity(vel);\n", floor: 4,
-      inputs: [ { name: "vel", type: "Vector2d" } ], outputs: [] 
+    { name: 'update_ball2', content: "Setball2(ball);\n", floor: 10,
+      inputs: [ { name: "ball", type: "Rigidbody2d" } ], outputs: [] 
     },
 ];
 

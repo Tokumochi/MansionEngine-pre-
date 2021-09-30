@@ -17,12 +17,12 @@ export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind
     return (
         <>
             {
-                processes.map((process) => {
+                processes.map((process, index) => {
                     const { name, content } = process;
                     const process_url: string = "/process/" + name;
                     const main_color = ((selecting_kind === "Process" && selecting_process.name === name) ? 'red' : '#00afcc');
                     return (
-                        <div className="process" style={{background: main_color}}
+                        <div key={index} className="process" style={{background: main_color}}
                             onClick={() => {
                                 onProcessSelected(process);
                             }}
