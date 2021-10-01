@@ -1,5 +1,4 @@
-import { GenerateInitVar } from "./module";
-import { DoorKind, DoorState, DataState, ProcessState, StructState } from "./redux/states";
+import { DoorKind, DoorState, DataState, ProcessState } from "./redux/states";
 
 interface InputState {
     id: string,
@@ -15,7 +14,27 @@ interface CodeState {
     inputs: InputState[],
 }
 
-export const GenerateRoomCode = (doors: DoorState[], structs: StructState[], datas: DataState[], processes: ProcessState[]) => {
+export const initVar = (data: DataState): string => {
+    switch(data.type) {
+        case "Number":
+            return data.value.toString();
+        case "Struct":
+            var isfirst = true;
+            var code = "{ ";
+            for(const member of data.members) {
+                if(isfirst) {
+                    isfirst = false;
+                } else {
+                    code += ", "
+                }
+                code += member.name + ": " + initVar(member);
+            }
+            code += " }";
+            return code;
+    }
+};
+
+export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], processes: ProcessState[]) => {
 
     const codeStates: CodeState[] = doors.map((door) => {
         const { id, kind, floor, ref_name, stairs } = door;
@@ -39,22 +58,27 @@ export const GenerateRoomCode = (doors: DoorState[], structs: StructState[], dat
     processes.forEach((process: ProcessState) => {
         const { name, content, inputs, outputs } = process;
         code += "const Process" + name + " = (";
-        inputs.forEach(input => {
+        inputs.forEach((input, index) => {
             const { name } = input;
-            code += name + ",";
+            if(index !== 0) {
+                code += ", ";
+            }
+            code += name;
         });
         code += ") => {\n" + content + "return [";
-        outputs.forEach(output => {
+        outputs.forEach((output, index) => {
             const { name } = output;
-            code += name + ",";
+            if(index !== 0) {
+                code += ", ";
+            }
+            code += name;
         })
         code += "];\n}\n";
     });
 
     datas.forEach((data: DataState) => {
         const { name, type, value } = data;
-        code += "var Data" + name + " = " + (GenerateInitVar(type, structs, value) as [string, number])[0] + ";\n";
-        code += "function Set" + name + "(val) { Data" + name + " = val; }\n";
+        code += "var Data" + name + " = " + initVar(data) + ";\n"; 
     });
 
     code += "const canvas = document.createElement('canvas');\n";
@@ -73,11 +97,14 @@ export const GenerateRoomCode = (doors: DoorState[], structs: StructState[], dat
                 break;
             case "Process":
                 code += "const output" + state.id + " = Process" + state.ref_name + "(";
-                state.inputs.forEach((input: InputState) => {
+                state.inputs.forEach((input: InputState, index) => {
+                    if(index !== 0) {
+                        code += ", ";
+                    }
                     if(input.kind === "Data") {
-                        code += "output" + input.id + ",";
+                        code += "output" + input.id;
                     } else {
-                        code += "output" + input.id + "[" + input.index + "],";
+                        code += "output" + input.id + "[" + input.index + "]";
                     }
                 });
                 code += ");\n"

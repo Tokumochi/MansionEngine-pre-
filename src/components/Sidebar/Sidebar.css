@@ -1,6 +1,6 @@
 .side-bar {
     position: fixed;
-    background: lemonchiffon;
     width: 20vw;
-    height: 100vh;
+    min-height: 100vh;
+    overflow: scroll;
 }

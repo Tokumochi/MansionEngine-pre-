@@ -14,7 +14,7 @@ export interface StorageProps {
 
 export const Storage: FC<StorageProps> = ( { datas, selecting_kind, selecting_name, onDataSelected }: StorageProps ) => {
     return (
-        <>
+        <div className="storage_base">
             {
                 datas.map((data, index) => {
                     const { name, value } = data;
@@ -30,7 +30,7 @@ export const Storage: FC<StorageProps> = ( { datas, selecting_kind, selecting_na
                     );
                 })
             }
-        </>
+        </div>
     );
 }
 

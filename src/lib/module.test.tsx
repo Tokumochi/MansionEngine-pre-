@@ -1,51 +1,39 @@
-import { GenerateInitVar } from './module';
-import { StructState } from './redux/states';
+import { initVar } from './CodeGenerator';
+import { DataState } from './redux/states';
 
-const structs: StructState[] = [
-    { name: "Vector2d",
-      members: [
-        { name: "x", type: "Number" },
-        { name: "y", type: "Number" } 
-      ]
-    },
-    { name: "Rigidbody2d",
-      members: [
-        { name: "position", type: "Vector2d" },
-        { name: "velocity", type: "Vector2d" },
-        { name: "mass", type: "Number" },
-        { name: "bounce", type: "Number" },
-      ]
-    },
-    { name: "s1",
-      members: [
-        { name: "c", type: "Number" },
-      ]
-    },
-    { name: "s2",
-      members: [
-        { name: "b", type: "s1" },
-      ]
-    },
-    { name: "s3",
-      members: [
-        { name: "a", type: "s2" },
-      ]
-    },
-]
+const datas: DataState[] = [
+    { name: 'num', type: "Number", value: 10, members: [] },
+    { name: 'empty', type: "Struct", value: -1, members: [] },
+    { name: 'one_member', type: "Struct", value: -1, members: [
+        { name: 'one', type: "Number", value: 11, members: [] },
+    ]},
+    { name: 'two_member', type: "Struct", value: -1, members: [
+        { name: 'one', type: "Number", value: 11, members: [] },
+        { name: 'two', type: "Number", value: 22, members: [] },
+    ]},
+    { name: 'ball', type: "Struct", value: -1, members: [
+        { name: 'GameObject', type: "Struct", value: -1, members: [
+            { name: 'position', type: "Struct", value: -1, members: [
+                { name: 'x', type: "Number", value: 400, members: [] },
+                { name: 'y', type: "Number", value: 300, members: [] },
+            ]},
+            { name: 'radius', type: "Number", value: 50, members: [] },
+        ]},
+        { name: 'Rigidbody', type: "Struct", value: -1, members: [
+            { name: 'velocity', type: "Struct", value: -1, members: [
+                { name: 'x', type: "Number", value: 2, members: [] },
+                { name: 'y', type: "Number", value: 3, members: [] },
+            ]},
+            { name: 'mass', type: "Number", value: 200, members: [] },
+            { name: 'bounce', type: "Number", value: 0.5, members: [] },
+        ]},
+    ]},
+];
 
 test('GenerateInitVar test', () => {
-    expect(GenerateInitVar("Number", [], [10])).toStrictEqual(["10", 1]);
-    expect(GenerateInitVar("Number", [], [5, 6, 7])).toStrictEqual(["5", 1]);
-    expect(GenerateInitVar("Number", [], [])).toBeUndefined();
-    expect(GenerateInitVar("Number", [], [10], 1)).toBeUndefined(); 
-
-    expect(GenerateInitVar("Vector2d", structs, [11, 23])).toStrictEqual(["{ x: 11, y: 23 }", 2]);
-    expect(GenerateInitVar("Vector2d", structs, [11, 23, 34])).toStrictEqual(["{ x: 11, y: 23 }", 2]);
-    expect(GenerateInitVar("Vector2d", structs, [11])).toBeUndefined();
-    expect(GenerateInitVar("Vector2d", structs, [11, 23], 1)).toBeUndefined();
-
-    expect(GenerateInitVar("Rigidbody2d", structs, [10, 20, 1, 2, 30, 0.5])).toStrictEqual(["{ position: { x: 10, y: 20 }, velocity: { x: 1, y: 2 }, mass: 30, bounce: 0.5 }", 6]);
-
-    expect(GenerateInitVar("s3", structs, [101])).toStrictEqual(["{ a: { b: { c: 101 } } }", 1]);
-    expect(GenerateInitVar("notExit", structs, [1, 2, 3, 4, 5])).toBeUndefined();
+    expect(initVar(datas[0])).toEqual("10");
+    expect(initVar(datas[1])).toEqual("{  }");
+    expect(initVar(datas[2])).toEqual("{ one: 11 }");
+    expect(initVar(datas[3])).toEqual("{ one: 11, two: 22 }");
+    expect(initVar(datas[4])).toEqual("{ GameObject: { position: { x: 400, y: 300 }, radius: 50 }, Rigidbody: { velocity: { x: 2, y: 3 }, mass: 200, bounce: 0.5 } }");
 });

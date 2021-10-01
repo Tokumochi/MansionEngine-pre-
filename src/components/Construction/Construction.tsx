@@ -15,7 +15,7 @@ export interface ConstructionProps {
 
 export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind, selecting_process, onProcessSelected }: ConstructionProps ) => {
     return (
-        <>
+        <div className="process_base">
             {
                 processes.map((process, index) => {
                     const { name, content } = process;
@@ -34,7 +34,7 @@ export const Construction: FC<ConstructionProps> = ( { processes, selecting_kind
                     );
                 })
             }
-        </>
+        </div>
     );
 }
 

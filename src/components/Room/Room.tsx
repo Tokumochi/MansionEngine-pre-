@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { connect } from 'react-redux';
 import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { AppState, DataState, DoorState, ProcessState, RoomState, SelectorState, StructState } from '../../lib/redux/states';
+import { AppState, DataState, DoorState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
 import { rooms_actions, selector_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
@@ -9,7 +9,6 @@ import './Room.css';
 
 export interface RoomProps {
     room: RoomState,
-    structs: StructState[],
     datas: DataState[],
     processes: ProcessState[],
     selector: SelectorState,
@@ -23,7 +22,7 @@ export interface RoomProps {
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { room, structs, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
     const { selecting_kind, selecting_id, selecting_index, selecting_name, selecting_process } = selector;
     const url: string = "run.html";
@@ -61,7 +60,7 @@ export const Room: FC<RoomProps> = ( { room, structs, datas, processes, selector
             </a>
             <rect className="save_button" cursor="pointer"
                 onClick={() => {
-                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, structs, datas, processes));
+                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, datas, processes));
                 }
             }/>
             <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black" pointerEvents="none">保存</text>
@@ -72,7 +71,6 @@ export const Room: FC<RoomProps> = ( { room, structs, datas, processes, selector
 export default connect(
     (props: AppState) => ({
         room: props.room,
-        structs: props.structs,
         datas: props.datas,
         processes: props.processes,
         selector: props.selector,
