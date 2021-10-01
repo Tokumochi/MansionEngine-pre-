@@ -1,7 +1,6 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { connect } from 'react-redux';
-import { GenerateRoomCode } from '../../lib/CodeGenerator';
-import { AppState, DataState, DoorState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
+import { AppState, DoorState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
 import { rooms_actions, selector_actions } from '../../lib/redux/actions';
 import { Door } from '../Door/Door'
 
@@ -9,8 +8,6 @@ import './Room.css';
 
 export interface RoomProps {
     room: RoomState,
-    datas: DataState[],
-    processes: ProcessState[],
     selector: SelectorState,
     onAddingNewDataDoor(ref_name: string, x: number, y: number): void,
     onAddingNewProcessDoor(process: ProcessState, x: number, y: number): void,
@@ -22,7 +19,7 @@ export interface RoomProps {
     onStairSelected(id: string, index: number): void,
 }
 
-export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
+export const Room: FC<RoomProps> = ( { room, selector, onAddingNewDataDoor, onAddingNewProcessDoor, onDoorPosChanged, onDeleteDoor, onStairConnected, onNothingSelected, onDoorSelected, onStairSelected }: RoomProps ) => {
     const { doors, room_width, room_height } = room;
     const { selecting_kind, selecting_id, selecting_index, selecting_name, selecting_process } = selector;
     const url: string = "run.html";
@@ -53,17 +50,6 @@ export const Room: FC<RoomProps> = ( { room, datas, processes, selector, onAddin
                     );
                 }) 
             }
-
-            <a href={url} target="_blank">
-                <rect className="run_button"/>
-                <text x="75" y="50" textAnchor="middle" fontSize="20" fill="black">実行</text>
-            </a>
-            <rect className="save_button" cursor="pointer"
-                onClick={() => {
-                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, datas, processes));
-                }
-            }/>
-            <text x="200" y="50" textAnchor="middle" fontSize="20" fill="black" pointerEvents="none">保存</text>
         </svg>
     );
 }
