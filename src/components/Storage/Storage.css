@@ -6,12 +6,18 @@
     overflow: scroll;
 }
 
+.data_base {
+    margin: 10px 5px;
+    padding: 5px;
+}
+
 .data {
+    display: block;
+    overflow: hidden;
     background: rgb(170, 255, 101);
-    width: 80%;
-    height: 30px;
-    margin-top: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    margin: 0px;
+    border: solid 1px rgb(88, 88, 88);
+    text-align: left;
+    white-space: nowrap;
+    user-select: none;
 }

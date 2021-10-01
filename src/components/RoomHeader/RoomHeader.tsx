@@ -1,3 +1,4 @@
+import { read } from 'fs';
 import { FC } from 'react';
 import { connect } from 'react-redux';
 
@@ -15,16 +16,13 @@ interface RoomHeaderProps {
 export const RoomHeader: FC<RoomHeaderProps> = ( { room, datas, processes }: RoomHeaderProps ) => {
     const { doors } = room;
     const url: string = "run.html";
+
     return (
         <div className="room_header">
-            <div className="run_button"onClick={() => { window.open(url); }}>
+            <div className="run_button" onClick={() => { window.open(url); }}>
                 実行
             </div>
-            <div className="save_button"
-                onClick={() => {
-                    localStorage.setItem('RoomCode', GenerateRoomCode(doors, datas, processes));
-                }
-            }>
+            <div className="save_button" onClick={() => { localStorage.setItem('RoomCode', GenerateRoomCode(doors, datas, processes)); }}>
                 保存
             </div>
         </div>
