@@ -1,7 +1,7 @@
 import { combineReducers, createStore } from 'redux';
 
 import { SelectedKind, DoorState, RoomState, AppState, ProcessState, SelectorState, DoorKind, DataState } from './states';
-import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes } from './actions';
+import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes, DatasActionTypes } from './actions';
 
 // Recuder
 function AddNewDataDoorReducer() {
@@ -127,51 +127,75 @@ export const rooms_reducer = (state: any = initialRoomsState, action: any): Room
     }
 };
 
+function SetNumberDataReducer() {
+    return (state: DataState[], action: { type: string, payload: { id: string, value: string } } ): DataState[] => {
+        const SetNumberData = (data: DataState): DataState => {
+            switch(data.type) {
+                case "Number":
+                    return (data.id === action.payload.id) ? {
+                        ...data,
+                        value: Number(action.payload.value) === NaN ? data.value : Number(action.payload.value),
+                    } : data;
+                case "Struct":
+                    return {
+                        ...data,
+                        members: data.members.map(member => SetNumberData(member)),
+                    };
+                default:
+                    return data;
+            }
+        }
+        return state.map(data => SetNumberData(data));
+    }
+}
+
 const initialDatasState: DataState[] = [
-    { name: 'ball1', type: "Struct", value: -1, members: [
-        { name: 'GameObject', type: "Struct", value: -1, members: [
-            { name: 'position', type: "Struct", value: -1, members: [
-                { name: 'x', type: "Number", value: 400, members: [] },
-                { name: 'y', type: "Number", value: 300, members: [] },
+    { id: '1', name: 'ball1', type: "Struct", value: -1, members: [
+        { id: '11', name: 'GameObject', type: "Struct", value: -1, members: [
+            { id: '111', name: 'position', type: "Struct", value: -1, members: [
+                { id: '1111', name: 'x', type: "Number", value: 400, members: [] },
+                { id: '1112', name: 'y', type: "Number", value: 300, members: [] },
             ]},
-            { name: 'radius', type: "Number", value: 50, members: [] },
+            { id: '112', name: 'radius', type: "Number", value: 50, members: [] },
         ]},
-        { name: 'Rigidbody', type: "Struct", value: -1, members: [
-            { name: 'velocity', type: "Struct", value: -1, members: [
-                { name: 'x', type: "Number", value: 0, members: [] },
-                { name: 'y', type: "Number", value: 0, members: [] },
+        { id: '12', name: 'Rigidbody', type: "Struct", value: -1, members: [
+            { id: '121', name: 'velocity', type: "Struct", value: -1, members: [
+                { id: '1211', name: 'x', type: "Number", value: 0, members: [] },
+                { id: '1212', name: 'y', type: "Number", value: 0, members: [] },
             ]},
-            { name: 'mass', type: "Number", value: 200, members: [] },
-            { name: 'bounce', type: "Number", value: 0.5, members: [] },
+            { id: '122', name: 'mass', type: "Number", value: 200, members: [] },
+            { id: '123', name: 'bounce', type: "Number", value: 0.5, members: [] },
         ]},
     ]},
-    { name: 'ball2', type: "Struct", value: -1, members: [
-        { name: 'GameObject', type: "Struct", value: -1, members: [
-            { name: 'position', type: "Struct", value: -1, members: [
-                { name: 'x', type: "Number", value: 200, members: [] },
-                { name: 'y', type: "Number", value: 200, members: [] },
+    { id: '2', name: 'ball2', type: "Struct", value: -1, members: [
+        { id: '21', name: 'GameObject', type: "Struct", value: -1, members: [
+            { id: '211', name: 'position', type: "Struct", value: -1, members: [
+                { id: '2111', name: 'x', type: "Number", value: 200, members: [] },
+                { id: '2112', name: 'y', type: "Number", value: 200, members: [] },
             ]},
-            { name: 'radius', type: "Number", value: 80, members: [] },
+            { id: '212', name: 'radius', type: "Number", value: 80, members: [] },
         ]},
-        { name: 'Rigidbody', type: "Struct", value: -1, members: [
-            { name: 'velocity', type: "Struct", value: -1, members: [
-                { name: 'x', type: "Number", value: 4, members: [] },
-                { name: 'y', type: "Number", value: 3, members: [] },
+        { id: '22', name: 'Rigidbody', type: "Struct", value: -1, members: [
+            { id: '221', name: 'velocity', type: "Struct", value: -1, members: [
+                { id: '2211', name: 'x', type: "Number", value: 4, members: [] },
+                { id: '2212', name: 'y', type: "Number", value: 3, members: [] },
             ]},
-            { name: 'mass', type: "Number", value: 100, members: [] },
-            { name: 'bounce', type: "Number", value: 0.5, members: [] },
+            { id: '222', name: 'mass', type: "Number", value: 100, members: [] },
+            { id: '223', name: 'bounce', type: "Number", value: 0.5, members: [] },
         ]},
     ]},
 ];
 
 export const datas_reducer = (state: any = initialDatasState, action: any): DataState[] => {
     switch(action.type) {
+        case DatasActionTypes.SET_NUMBER_DATA:
+            return SetNumberDataReducer()(state, action);
         default:
             return state;
     }
 };
 
-function SetProcessContent() {
+function SetProcessContentReducer() {
     return (state: ProcessState[], action: { type: string, payload: { name: string, content: string } } ): ProcessState[] => {
         return state.map(process => 
             process.name === action.payload.name ? {
@@ -198,7 +222,7 @@ const initialProcessesState: ProcessState[] = [
         "updated_b = b;" +
         "if(Math.pow(a.GameObject.position.x - b.GameObject.position.x, 2) + Math.pow(a.GameObject.position.y - b.GameObject.position.y, 2) <= Math.pow(a.GameObject.radius + b.GameObject.radius, 2)) {\n" +
         "    const relativeVelocity = Math.sqrt(Math.pow(b.Rigidbody.velocity.x - a.Rigidbody.velocity.x, 2) + Math.pow(b.Rigidbody.velocity.y - a.Rigidbody.velocity.y, 2));\n" +
-        "    const d = { x: b.position.x - a.position.x, y: b.position.y - a.position.y };\n" +
+        "    const d = { x: b.GameObject.position.x - a.GameObject.position.x, y: b.GameObject.position.y - a.GameObject.position.y };\n" +
         "    const len = Math.sqrt(d.x * d.x + d.y * d.y);\n" +
         "    const collisionNormal = { x: d.x / len, y: d.y / len };\n" +
         "    const J = - relativeVelocity * (a.Rigidbody.bounce + b.Rigidbody.bounce) / (1 / a.Rigidbody.mass + 1 / b.Rigidbody.mass);\n" +
@@ -230,7 +254,7 @@ const initialProcessesState: ProcessState[] = [
 export const processes_reducer = (state: any = initialProcessesState, action: any): ProcessState[] => {
     switch(action.type) {
         case ProcessesActionTypes.SET_PROCESS_CONTENT:
-            return SetProcessContent()(state, action);
+            return SetProcessContentReducer()(state, action);
         default: 
             return state;
     }

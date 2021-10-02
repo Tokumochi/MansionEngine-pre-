@@ -17,6 +17,14 @@ export const rooms_actions = {
     connectStair:      (upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number) => { return ({ type: RoomsActionTypes.CONNECT_STAIR,        payload: { upper_id: upper_id, upper_index: upper_index, lower_door: lower_door, lower_index: lower_index } }) },
 };
 
+export enum DatasActionTypes {
+    SET_NUMBER_DATA = 'Datas/SET_NUMBER_DATA',
+}
+
+export const datas_actions = {
+    setNumberData: (id: string, value: string) => { return ({ type: DatasActionTypes.SET_NUMBER_DATA, payload: { id: id, value: value } }) },
+}
+
 export enum ProcessesActionTypes {
     SET_PROCESS_CONTENT = 'Processes/SET_PROCESS_CONTENT',
 }

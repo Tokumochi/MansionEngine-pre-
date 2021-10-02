@@ -65,7 +65,12 @@ export const GenerateRoomCode = (doors: DoorState[], datas: DataState[], process
             }
             code += name;
         });
-        code += ") => {\n" + content + "return [";
+        code += ") => {\n";
+        outputs.forEach((output) => {
+            const { name } = output;
+            code += "var " + name + ";\n";
+        })
+        code += content + "return [";
         outputs.forEach((output, index) => {
             const { name } = output;
             if(index !== 0) {

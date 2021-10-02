@@ -6,6 +6,7 @@ export type DoorKind = "Data" | "Process" | "Room";
 export type SelectedKind = "Nothing" | "Door" | "Stair" | "Data" | "Process";
 
 export interface DataState {
+    id: string,
     name: string,
     type: TypeKind,
     value: Number,

@@ -9,6 +9,7 @@
 .data_base {
     margin: 10px 5px;
     padding: 5px;
+    border: solid 1px rgb(88, 88, 88);
 }
 
 .data {
@@ -16,7 +17,7 @@
     overflow: hidden;
     background: rgb(170, 255, 101);
     margin: 0px;
-    border: solid 1px rgb(88, 88, 88);
+    border: solid 1px rgb(122, 122, 122);
     text-align: left;
     white-space: nowrap;
     user-select: none;
