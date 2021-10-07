@@ -1,8 +1,10 @@
 .process_base {
+    position: fixed;
     background: rgb(137, 156, 163);
-    width: 98%;
-    height: 49vh;
-    border-bottom: solid 2vh white;
+    width: 100vw;
+    height: 29vh;
+    bottom: 0;
+    border-top: solid 1vh white;
     overflow: scroll;
 }
 

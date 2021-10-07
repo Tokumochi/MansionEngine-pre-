@@ -1,0 +1,9 @@
+.mansion_base {
+    position: fixed;
+    background: rgb(137, 156, 163);
+    width: 19vw;
+    height: 67vh;
+    margin-top: 10vh;
+    border-right: solid 1vw white;
+    overflow: scroll;
+}

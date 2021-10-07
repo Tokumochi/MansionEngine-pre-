@@ -1,8 +1,9 @@
 .room_header {
     display: flex;
-    width: 100%;
-    height: 10vh;
     background: rgb(137, 156, 163);
+    width: 100vw;
+    height: 9vh;
+    border-bottom: solid 1vh white;
     position: fixed;
 }
 
@@ -10,7 +11,7 @@
     background: rgb(195, 255, 56);
     width: 100px;
     height: 6vh;
-    margin: 2vh 2vh;
+    margin: auto;
     border-radius: 5px;
     text-align: center;
     text-decoration: none;
@@ -22,7 +23,7 @@
     background: rgb(69, 56, 255);
     width: 100px;
     height: 6vh;
-    margin: 2vh 2vh;
+    margin: auto;
     border-radius: 5px;
     text-align: center;
     text-decoration: none;

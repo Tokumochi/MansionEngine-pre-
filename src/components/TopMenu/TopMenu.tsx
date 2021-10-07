@@ -3,9 +3,9 @@ import { FC } from 'react';
 import { connect } from 'react-redux';
 
 import { AppState, DataState, DoorState, ProcessState, RoomState, SelectorState } from '../../lib/redux/states';
-import { GenerateRoomCode } from './../../lib/CodeGenerator';
+import { GenerateRoomCode } from '../../lib/CodeGenerator';
 
-import './RoomHeader.css';
+import './TopMenu.css';
 
 interface RoomHeaderProps {
     room: RoomState,
