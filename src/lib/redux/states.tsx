@@ -40,9 +40,12 @@ export interface DoorState {
 }
 
 export interface RoomState {
+    id: string,
+    name: string,
     doors: DoorState[],
     room_width: number,
     room_height: number,
+    children: RoomState[],
 }
 
 export interface SelectorState {
@@ -54,7 +57,7 @@ export interface SelectorState {
 }
 
 export interface AppState {
-    room: RoomState,
+    rooms: RoomState[],
     datas: DataState[],
     processes: ProcessState[],
     selector: SelectorState,

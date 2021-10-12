@@ -8,9 +8,9 @@ import './Door.css';
 export interface DoorProps {
     door: DoorState,
     selector: SelectorState,
-    onDoorPosChanged(id: string, x: number, y: number): void,
-    onDeleteDoor(id: string): void,
-    onStairConnected(upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number): void,
+    onDoorPosChanged(room_id: string, id: string, x: number, y: number): void,
+    onDeleteDoor(room_id: string, id: string): void,
+    onStairConnected(room_id: string, upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number): void,
     onNothingSelected(): void,
     onDoorSelected(id: string): void,
     onStairSelected(id: string, index: number): void,
@@ -49,7 +49,7 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onDelet
             </Link>
             <circle className="delete_button" cx={x + 90} cy={y - 40} r="10"
                 onClick={() => {
-                    onDeleteDoor(id);
+                    onDeleteDoor('1', id);
                 }}
             />
             { Array.from({ length: num_of_output }).map((_, index) =>
@@ -59,7 +59,7 @@ export const Door: FC<DoorProps> = ( { door, selector, onDoorPosChanged, onDelet
                         <circle key={'o' + index} className="output_point" cx={x + offset_x} cy={y - 50} r="13"
                             onClick={() => {
                                 if(selecting_kind === "Stair") {
-                                    onStairConnected(selecting_id, selecting_index, door, index);
+                                    onStairConnected('1', selecting_id, selecting_index, door, index);
                                     onNothingSelected();
                                 }
                             }}

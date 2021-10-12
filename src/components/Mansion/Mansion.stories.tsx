@@ -2,7 +2,7 @@ import { Provider } from 'react-redux';
 import { Story } from '@storybook/react';
 
 import store from './../../lib/redux/reducers';
-import { Mansion } from './Mansion';
+import Mansion from './Mansion';
 
 export default {
     component: Mansion,

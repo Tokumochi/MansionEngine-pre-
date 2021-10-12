@@ -15,11 +15,10 @@ export interface StorageProps {
 
 const ChildData = (data: DataState, onNumberDataChanged: (id: string, value: string) => void, depth: number = 0): JSX.Element => {
     const background_color = '#b8d200';
-
     switch(data.type) {
         case "Number":
             return (
-                <div className="data" style={{background: background_color, paddingLeft: 10 * depth}}>
+                <div key={data.id} className="data" style={{background: background_color, paddingLeft: 10 * depth}}>
                     { data.name + ": " }
                     <input type="number" value={data.value.toString()} onChange={(e) => {
                         onNumberDataChanged(data.id, e.target.value);
@@ -29,7 +28,7 @@ const ChildData = (data: DataState, onNumberDataChanged: (id: string, value: str
         case "Struct":
             return (
                 <>
-                    <div className="data" style={{background: background_color, paddingLeft: 10 * depth}}>
+                    <div key={data.id} className="data" style={{background: background_color, paddingLeft: 10 * depth}}>
                         { data.name }
                     </div>
                     { data.members.map((member) => {

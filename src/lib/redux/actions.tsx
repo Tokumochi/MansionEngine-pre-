@@ -10,11 +10,11 @@ export enum RoomsActionTypes {
 }
 
 export const rooms_actions = {
-    addNewDataDoor:    (ref_name: string, x: number, y: number)                                            => { return ({ type: RoomsActionTypes.ADD_NEW_DATA_DOOR,    payload: { ref_name: ref_name, x: x, y: y } }) },
-    addNewProcessDoor: (process: ProcessState, x: number, y: number)                                       => { return ({ type: RoomsActionTypes.ADD_NEW_PROCESS_DOOR, payload: { process: process, x: x, y: y } }) },
-    setDoorPos:        (id: string, x: number, y: number)                                                  => { return ({ type: RoomsActionTypes.SET_DOOR_POS,         payload: { id: id, x: x, y: y } }) },
-    deleteDoor:        (id: string)                                                                        => { return ({ type: RoomsActionTypes.DELETE_DOOR,          payload: { id: id } }) },
-    connectStair:      (upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number) => { return ({ type: RoomsActionTypes.CONNECT_STAIR,        payload: { upper_id: upper_id, upper_index: upper_index, lower_door: lower_door, lower_index: lower_index } }) },
+    addNewDataDoor:    (room_id: string, ref_name: string, x: number, y: number)                                            => { return ({ type: RoomsActionTypes.ADD_NEW_DATA_DOOR,    payload: { room_id: room_id, ref_name: ref_name, x: x, y: y } }) },
+    addNewProcessDoor: (room_id: string, process: ProcessState, x: number, y: number)                                       => { return ({ type: RoomsActionTypes.ADD_NEW_PROCESS_DOOR, payload: { room_id: room_id, process: process, x: x, y: y } }) },
+    setDoorPos:        (room_id: string, id: string, x: number, y: number)                                                  => { return ({ type: RoomsActionTypes.SET_DOOR_POS,         payload: { room_id: room_id, id: id, x: x, y: y } }) },
+    deleteDoor:        (room_id: string, id: string)                                                                        => { return ({ type: RoomsActionTypes.DELETE_DOOR,          payload: { room_id: room_id, id: id } }) },
+    connectStair:      (room_id: string, upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number) => { return ({ type: RoomsActionTypes.CONNECT_STAIR,        payload: { room_id: room_id, upper_id: upper_id, upper_index: upper_index, lower_door: lower_door, lower_index: lower_index } }) },
 };
 
 export enum DatasActionTypes {

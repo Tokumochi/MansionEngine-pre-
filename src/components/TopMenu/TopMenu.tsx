@@ -8,13 +8,13 @@ import { GenerateRoomCode } from '../../lib/CodeGenerator';
 import './TopMenu.css';
 
 interface RoomHeaderProps {
-    room: RoomState,
+    rooms: RoomState[],
     datas: DataState[],
     processes: ProcessState[],
 }
 
-export const RoomHeader: FC<RoomHeaderProps> = ( { room, datas, processes }: RoomHeaderProps ) => {
-    const { doors } = room;
+export const RoomHeader: FC<RoomHeaderProps> = ( { rooms, datas, processes }: RoomHeaderProps ) => {
+    const { doors } = rooms[0];
     const url: string = "run.html";
 
     return (
@@ -31,7 +31,7 @@ export const RoomHeader: FC<RoomHeaderProps> = ( { room, datas, processes }: Roo
 
 export default connect(
     (props: AppState) => ({
-        room: props.room,
+        rooms: props.rooms,
         datas: props.datas,
         processes: props.processes,
     }),

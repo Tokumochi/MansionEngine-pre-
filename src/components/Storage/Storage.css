@@ -1,11 +1,10 @@
 .storage_base {
     position: fixed;
-    background: rgb(137, 156, 163);
-    width: 19vw;
+    background: rgb(221, 221, 221);
+    width: 20vw;
     height: 60vh;
     margin-top: 10vh;
     right: 0;
-    border-left: solid 1vw white;
     overflow: scroll;
 }
 

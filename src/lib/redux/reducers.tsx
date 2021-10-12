@@ -5,112 +5,132 @@ import { RoomsActionTypes, ProcessesActionTypes, SelectorActionTypes, DatasActio
 
 // Recuder
 function AddNewDataDoorReducer() {
-    return (state: RoomState, action: { type: string, payload: { ref_name: string, x: number, y: number } } ) => {
+    return (state: RoomState[], action: { type: string, payload: { room_id: string, ref_name: string, x: number, y: number } } ): RoomState[] => {
         const door_kind: DoorKind = "Data";
-        return {
-            ...state,
-            doors: [...state.doors, {
-                id: Math.random().toString(32).substring(2),
-                name: action.payload.ref_name + '(data)',
-                kind: door_kind,
-                x: action.payload.x,
-                y: action.payload.y,
-                floor: 0,
-                ref_name: action.payload.ref_name,
-                isCorridor: false,
-                stairs: [],
-                num_of_output: 1,
-            } ],
-        }
+        return state.map(room =>
+            (room.id === action.payload.room_id) ? {
+                ...room,
+                doors: [...room.doors, {
+                    id: Math.random().toString(32).substring(2),
+                    name: action.payload.ref_name + '(data)',
+                    kind: door_kind,
+                    x: action.payload.x,
+                    y: action.payload.y,
+                    floor: 0,
+                    ref_name: action.payload.ref_name,
+                    isCorridor: false,
+                    stairs: [],
+                    num_of_output: 1,
+                } ],
+            } : room
+        )
     }
 }
 function AddNewProcessDoorReducer() {
-    return (state: RoomState, action: { type: string, payload: { process: ProcessState, x: number, y: number } } ) => {
+    return (state: RoomState[], action: { type: string, payload: { room_id: string, process: ProcessState, x: number, y: number } } ): RoomState[] => {
         const door_kind: DoorKind = "Process";
-        return {
-            ...state,
-            doors: [...state.doors, {
-                id: Math.random().toString(32).substring(2),
-                name: action.payload.process.name + '(process)',
-                kind: door_kind,
-                x: action.payload.x,
-                y: action.payload.y,
-                floor: action.payload.process.floor,
-                ref_name: action.payload.process.name,
-                isCorridor: false,
-                stairs: Array.from(Array(action.payload.process.inputs.length), () => { return { lower_door: undefined, lower_index: -1 } }),
-                num_of_output: action.payload.process.outputs.length,
-            } ],
-        }
+        return state.map(room =>
+            (room.id === action.payload.room_id) ? {
+                ...room,
+                doors: [...room.doors, {
+                    id: Math.random().toString(32).substring(2),
+                    name: action.payload.process.name + '(process)',
+                    kind: door_kind,
+                    x: action.payload.x,
+                    y: action.payload.y,
+                    floor: action.payload.process.floor,
+                    ref_name: action.payload.process.name,
+                    isCorridor: false,
+                    stairs: Array.from(Array(action.payload.process.inputs.length), () => { return { lower_door: undefined, lower_index: -1 } }),
+                    num_of_output: action.payload.process.outputs.length,
+                } ],
+            } : room
+        )
     }
 }
 function SetDoorPositionReducer() {
-    return (state: RoomState, action: { type: string, payload: { id: string, x: number, y: number } } ) => {
-        return {
-            ...state,
-            doors: state.doors.map(door =>
-                door.id === action.payload.id ? { ...door, x: action.payload.x, y: action.payload.y } : {
-                    ...door,
-                    stairs: door.stairs.map(stair => 
-                        ( stair.lower_door !== undefined && stair.lower_door.id === action.payload.id ) ? {
-                            ...stair,
-                            lower_door: {
-                                ...stair.lower_door,
-                                x: action.payload.x,
-                                y: action.payload.y
-                            } 
-                        }: stair
-                    ),
-                }
-            ),
-        }
+    return (state: RoomState[], action: { type: string, payload: { room_id: string, id: string, x: number, y: number } } ): RoomState[] => {
+        return state.map(room =>
+            (room.id === action.payload.room_id) ? {
+                ...room,
+                doors: room.doors.map(door =>
+                    door.id === action.payload.id ? { ...door, x: action.payload.x, y: action.payload.y } : {
+                        ...door,
+                        stairs: door.stairs.map(stair => 
+                            ( stair.lower_door !== undefined && stair.lower_door.id === action.payload.id ) ? {
+                                ...stair,
+                                lower_door: {
+                                    ...stair.lower_door,
+                                    x: action.payload.x,
+                                    y: action.payload.y
+                                } 
+                            }: stair
+                        ),
+                    }
+                ),
+            } : room
+        )
     }
 }
 function DeleteDoorReducer() {
-    return (state: RoomState, action: { type: string, payload: { id: string } } ) => {
-        return {
-            ...state,
-            doors: state.doors.filter(door => {
-                return door.id !== action.payload.id;
-            })
-            .map(door => {
-                return {
-                    ...door,
-                    stairs: door.stairs.map(stair =>
-                        (stair.lower_door !== undefined && stair.lower_door.id === action.payload.id) ? { lower_door: undefined, lower_index: -1 } : stair
-                    ),
-                }
-            }),
-        }
+    return (state: RoomState[], action: { type: string, payload: { room_id: string, id: string } } ): RoomState[] => {
+        return state.map(room =>
+            (room.id === action.payload.room_id) ? {
+                ...room,
+                doors: room.doors.filter(door => {
+                    return door.id !== action.payload.id;
+                })
+                .map(door => {
+                    return {
+                        ...door,
+                        stairs: door.stairs.map(stair =>
+                            (stair.lower_door !== undefined && stair.lower_door.id === action.payload.id) ? { lower_door: undefined, lower_index: -1 } : stair
+                        ),
+                    }
+                }),
+            } : room
+        )
     }
 }
 function ConnectStairReducer() {
-    return (state: RoomState, action: { type: string, payload: { upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number } } ): RoomState => {
+    return (state: RoomState[], action: { type: string, payload: { room_id: string, upper_id: string, upper_index: number, lower_door: DoorState, lower_index: number } } ): RoomState[] => {
         const lower_floor: number = action.payload.lower_door.floor;
-
-        return {
-            ...state,
-            doors: state.doors.map(door =>
-                (door.id === action.payload.upper_id && lower_floor < door.floor) ? {
-                    ...door,
-                    stairs: door.stairs.map((stair, index) =>
-                        (index === action.payload.upper_index) ? { lower_door: action.payload.lower_door, lower_index: action.payload.lower_index } : stair
-                    ),
-                } : door
-            ),
-        }
+        return state.map(room =>
+            (room.id === action.payload.room_id) ? {
+                ...room,
+                doors: room.doors.map(door =>
+                    (door.id === action.payload.upper_id && lower_floor < door.floor) ? {
+                        ...door,
+                        stairs: door.stairs.map((stair, index) =>
+                            (index === action.payload.upper_index) ? { lower_door: action.payload.lower_door, lower_index: action.payload.lower_index } : stair
+                        ),
+                    } : door
+                ),
+            } : room
+        );
     }
 }
 
 const defaultDoors: DoorState[] = [];
 
-const initialRoomsState: RoomState = {
+const initialRoomsState: RoomState[] = [{
+    id: '1',
+    name: "entrance",
     doors: defaultDoors,
     room_width: 2000,
     room_height: 1000,
-};
+    children: [
+        {   id: '11',
+            name: "moving_ball",
+            doors: [],
+            room_width: 2000,
+            room_height: 1000,
+            children: [], 
+        },
+    ],
+}];
 
-export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState => {
+export const rooms_reducer = (state: any = initialRoomsState, action: any): RoomState[] => {
     switch(action.type) {
         case RoomsActionTypes.ADD_NEW_DATA_DOOR:
             return AddNewDataDoorReducer()(state, action);
@@ -298,7 +318,7 @@ export const selector_reducer = (state: any = initialSelectorState, action: any)
 };
 
 const reducers = combineReducers<AppState>({
-    room: rooms_reducer,
+    rooms: rooms_reducer,
     datas: datas_reducer,
     processes: processes_reducer,
     selector: selector_reducer,

@@ -2,8 +2,7 @@
     display: flex;
     background: rgb(137, 156, 163);
     width: 100vw;
-    height: 9vh;
-    border-bottom: solid 1vh white;
+    height: 10vh;
     position: fixed;
 }
 

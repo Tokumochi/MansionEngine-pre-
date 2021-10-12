@@ -2,9 +2,8 @@
     position: fixed;
     background: rgb(137, 156, 163);
     width: 100vw;
-    height: 29vh;
+    height: 30vh;
     bottom: 0;
-    border-top: solid 1vh white;
     overflow: scroll;
 }
 

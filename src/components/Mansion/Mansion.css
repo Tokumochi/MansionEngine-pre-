@@ -1,9 +1,25 @@
 .mansion_base {
     position: fixed;
-    background: rgb(137, 156, 163);
-    width: 19vw;
-    height: 67vh;
+    background: rgb(221, 221, 221);
+    width: 20vw;
+    height: 60vh;
     margin-top: 10vh;
-    border-right: solid 1vw white;
     overflow: scroll;
+}
+
+.room_base {
+    background: #006faf;
+    margin: 10px 5px;
+    padding: 5px;
+    border: solid 1px rgb(88, 88, 88);
+}
+
+.room {
+    overflow: hidden;
+    background: rgb(63, 188, 197);
+    margin: 0px;
+    border: solid 1px rgb(122, 122, 122);
+    text-align: left;
+    white-space: nowrap;
+    user-select: none;
 }
